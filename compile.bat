@@ -1,0 +1,1 @@
+ca65 -t nes main.asm && cl65 -t nes -o "Green Ham.nes" main.o
