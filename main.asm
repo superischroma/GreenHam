@@ -75,16 +75,6 @@ LoadSprites:
     cpx #$20
     bne @loop
 
-LoadAttributes:
-    lda PPUSTATUS
-    lda #$23
-    sta PPUADDR
-    lda #$C0
-    sta PPUADDR
-@loop:
-    lda #%00000000
-    sta PPUDATA
-
 EnableRendering:    
     lda #%10000000
     sta PPUCTRL
