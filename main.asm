@@ -2,6 +2,9 @@
 
     .segment "ZEROPAGE"
 
+PlayerBeads:
+    .byte 0
+
 PlayerFacing:
     .byte 0 ; right - 0, left - 1
 
@@ -117,7 +120,7 @@ LoadBackgroundFeatures:
     lda BackgroundFeatures, x
     sta PPUDATA
     inx
-    cpx #33
+    cpx #72
     bne @Loop
 
 LoadAttributes:
@@ -413,13 +416,13 @@ CleanNMI:
 Palettes:
     ; Background palettes
     .byte $0F, $02, $11, $30
-	.byte $0F, $35, $36, $37
+	.byte $0F, $3A, $29, $09
 	.byte $0F, $39, $3A, $3B
 	.byte $0F, $3D, $3E, $0F
 
     ; Sprite palettes
-	.byte $0F, $09, $37, $2A ; Green and black
-	.byte $0F, $02, $38, $3C
+	.byte $0F, $09, $39, $2A ; Green and black
+	.byte $0F, $38, $39, $0F
 	.byte $0F, $1C, $15, $14
 	.byte $0F, $02, $38, $3C
 
@@ -434,6 +437,23 @@ Sprites:
     .byte $D8, $09, %00000000, $1C
 
 BackgroundFeatures:
+    .byte $20, $43, $19
+    .byte $20, $44, $12
+    .byte $20, $45, $10
+
+    .byte $20, $63, $44
+    .byte $20, $64, $03
+
+    .byte $20, $4B, $0B
+    .byte $20, $4C, $0E
+    .byte $20, $4D, $0A
+    .byte $20, $4E, $0D
+    .byte $20, $4F, $1C
+
+    .byte $20, $6B, $44
+    .byte $20, $6C, $00
+    .byte $20, $6D, $00
+
     ; star cluster
     .byte $21, $78, $29
     .byte $21, $79, $2A
@@ -452,7 +472,8 @@ BackgroundFeatures:
     .byte $23, $3A, $28
 
 AttributeTable:
-    .byte %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000
+    .byte %01010101, %01010101, %01010101, %01010101, %01010101, %01010101, %01010101, %01010101
+    .byte %01010101, %01010101, %01010101, %01010101, %01010101, %01010101, %01010101, %01010101
 
     .segment "VECTORS"
 
