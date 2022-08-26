@@ -5,6 +5,9 @@
 PlayerFacing:
     .byte 0 ; right - 0, left - 1
 
+OverflowCounter: ; counting overflows for loops which exceed 256 iterations
+    .byte 0
+
     .segment "HEADER"
 
     .byte "NES", $1A ; iNES Header
@@ -59,24 +62,80 @@ LoadPalettes:
     lda #$00
     sta PPUADDR
     ldx #$00
-@loop:
+@Loop:
     lda Palettes, x
     sta PPUDATA
     inx 
     cpx #$20
-    bne @loop
+    bne @Loop
 
 LoadSprites:
     ldx #$00
-@loop:
+@Loop:
     lda Sprites, x
     sta $0200, x
     inx 
     cpx #$20
-    bne @loop
+    bne @Loop
+
+ClearBackground:
+    lda PPUSTATUS
+    lda #$20
+    sta PPUADDR
+    lda #$00
+    sta PPUADDR
+    ldx #$00
+    lda #$00
+    sta OverflowCounter
+@Loop:
+    lda #$24
+    sta PPUDATA
+    cpx #$FF
+    bne @AfterOverflowCheck
+    lda OverflowCounter
+    clc
+    adc #$01
+    sta OverflowCounter
+@AfterOverflowCheck:
+    inx
+    cpx #$C0
+    bne @Loop
+    lda OverflowCounter
+    cmp #$03
+    bne @Loop
+
+LoadBackgroundFeatures:
+    ldx #$00
+@Loop:
+    lda PPUSTATUS
+    lda BackgroundFeatures, x
+    sta PPUADDR
+    inx
+    lda BackgroundFeatures, x
+    sta PPUADDR
+    inx
+    lda BackgroundFeatures, x
+    sta PPUDATA
+    inx
+    cpx #33
+    bne @Loop
+
+LoadAttributes:
+    lda PPUSTATUS
+    lda #$23
+    sta PPUADDR
+    lda #$C0
+    sta PPUADDR
+    ldx #$00
+@Loop:
+    lda AttributeTable, x
+    sta PPUDATA
+    inx
+    cpx #$08
+    bne @Loop
 
 EnableRendering:    
-    lda #%10000000
+    lda #%10010000
     sta PPUCTRL
 
     lda #%00011110
@@ -340,10 +399,10 @@ SkipFlipPlayerRight:
 SkipRight:
 
 CleanNMI:
-    lda #%10000000
+    lda #%10010000
     sta PPUCTRL
 
-    lda #%00010110
+    lda #%00011110
     sta PPUMASK
 
     lda #$00
@@ -353,7 +412,7 @@ CleanNMI:
 
 Palettes:
     ; Background palettes
-    .byte $0F, $09, $32, $2A
+    .byte $0F, $02, $11, $30
 	.byte $0F, $35, $36, $37
 	.byte $0F, $39, $3A, $3B
 	.byte $0F, $3D, $3E, $0F
@@ -373,6 +432,27 @@ Sprites:
     .byte $D8, $07, %00000000, $0C
     .byte $D8, $08, %00000000, $14
     .byte $D8, $09, %00000000, $1C
+
+BackgroundFeatures:
+    ; star cluster
+    .byte $21, $78, $29
+    .byte $21, $79, $2A
+    .byte $21, $98, $2B
+    .byte $21, $99, $2C
+
+    ; bottom half star cluster
+    .byte $20, $C8, $2B
+    .byte $20, $C9, $2C
+
+    .byte $22, $03, $29
+
+    .byte $23, $19, $25
+    .byte $23, $1A, $26
+    .byte $23, $39, $27
+    .byte $23, $3A, $28
+
+AttributeTable:
+    .byte %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000
 
     .segment "VECTORS"
 
