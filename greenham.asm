@@ -4,7 +4,7 @@
 ; -                      MAIN CONTROLLER                   -
 ; ----------------------------------------------------------
 
-    .include "constants.inc"
+    .include "constants.asm"
 
     .segment "ZEROPAGE"
 
@@ -45,8 +45,8 @@ OverflowCounter: ; counting overflows for loops which exceed 256 iterations
 
     .segment "CODE"
 
-    .include "loader.inc"
-    .include "player.inc"
+    .include "loader.asm"
+    .include "player.asm"
 
 WaitForVBlank:
     bit PPUSTATUS
