@@ -1,12 +1,33 @@
+; ----------------------------------------------------------
+; -                        Green Ham                       -
+; -                 Written by superischroma               -
+; -                      MAIN CONTROLLER                   -
+; ----------------------------------------------------------
+
     .include "constants.inc"
 
     .segment "ZEROPAGE"
 
-PlayerBeads:
-    .byte 0
+; Lives count - starts at 3, goes to 99
+PlayerLives:
+    .byte $00, $00
 
+; Bead count - starts at 0, goes to 80
+PlayerBeads:
+    .byte $00, $00
+
+; Current stage of the player
+; 00 - Title screen
+; 01 - Space stage
+; 02-08 - TBD
+PlayerStage:
+    .byte $00
+
+; Direction player is facing
+; 00 - right
+; 01 - left
 PlayerFacing:
-    .byte 0 ; right - 0, left - 1
+    .byte $00
 
 OverflowCounter: ; counting overflows for loops which exceed 256 iterations
     .byte 0
@@ -24,6 +45,14 @@ OverflowCounter: ; counting overflows for loops which exceed 256 iterations
 
     .segment "CODE"
 
+    .include "loader.inc"
+    .include "player.inc"
+
+WaitForVBlank:
+    bit PPUSTATUS
+    bpl WaitForVBlank
+    rts
+
 Reset:
     sei 
     cld 
@@ -36,9 +65,7 @@ Reset:
     stx PPUMASK
     stx $4010
 
-VBlankWaitPre:
-    bit PPUSTATUS
-    bpl VBlankWaitPre
+    jsr WaitForVBlank
 
 ClearMemory:
     lda #$00
@@ -54,9 +81,13 @@ ClearMemory:
     inx 
     bne ClearMemory
 
-VBlankWaitPost:
-    bit PPUSTATUS
-    bpl VBlankWaitPost
+    jsr WaitForVBlank
+
+InitializeData:
+    ; Initialize lives
+    lda #$03
+    ldx #$01
+    sta PlayerLives, x
 
 LoadPalettes:
     lda PPUSTATUS
@@ -81,47 +112,7 @@ LoadSprites:
     cpx #$20
     bne @Loop
 
-ClearBackground:
-    lda PPUSTATUS
-    lda #$20
-    sta PPUADDR
-    lda #$00
-    sta PPUADDR
-    ldx #$00
-    lda #$00
-    sta OverflowCounter
-@Loop:
-    lda #$24
-    sta PPUDATA
-    cpx #$FF
-    bne @AfterOverflowCheck
-    lda OverflowCounter
-    clc
-    adc #$01
-    sta OverflowCounter
-@AfterOverflowCheck:
-    inx
-    cpx #$C0
-    bne @Loop
-    lda OverflowCounter
-    cmp #$03
-    bne @Loop
-
-LoadBackgroundFeatures:
-    ldx #$00
-@Loop:
-    lda PPUSTATUS
-    lda BackgroundFeatures, x
-    sta PPUADDR
-    inx
-    lda BackgroundFeatures, x
-    sta PPUADDR
-    inx
-    lda BackgroundFeatures, x
-    sta PPUDATA
-    inx
-    cpx #72
-    bne @Loop
+    jsr ClearBackground
 
 LoadAttributes:
     lda PPUSTATUS
@@ -161,73 +152,46 @@ LatchController:
 
 ReadA:
     lda $4016
-    and #%00000001
-    beq SkipA
-SkipA:
+;    and #%00000001
+;    beq SkipA
+;SkipA:
 
 ReadB:
     lda $4016
-    and #%00000001
-    beq SkipB
-SkipB:
+;    and #%00000001
+;    beq SkipB
+;SkipB:
 
 ReadSelect:
     lda $4016
-    and #%00000001
-    beq SkipSelect
-SkipSelect:
+;    and #%00000001
+;    beq SkipSelect
+;SkipSelect:
 
 ReadStart:
     lda $4016
-    and #%00000001
-    beq SkipStart
-SkipStart:
+;    and #%00000001
+;    beq SkipStart
+;SkipStart:
 
 ; Up movement code
 ReadUp:
     lda $4016
     and #%00000001
     beq SkipUp
-
-    lda $0200
+    ldx #$00
+@Loop:
+    lda $0200, x
     sec
     sbc #PLAYERSPEED
-    sta $0200
-
-    lda $0204
-    sec
-    sbc #PLAYERSPEED
-    sta $0204
-
-    lda $0208
-    sec
-    sbc #PLAYERSPEED
-    sta $0208
-
-    lda $020C
-    sec
-    sbc #PLAYERSPEED
-    sta $020C
-
-    lda $0210
-    sec
-    sbc #PLAYERSPEED
-    sta $0210
-
-    lda $0214
-    sec
-    sbc #PLAYERSPEED
-    sta $0214
-
-    lda $0218
-    sec
-    sbc #PLAYERSPEED
-    sta $0218
-
-    lda $021C
-    sec
-    sbc #PLAYERSPEED
-    sta $021C
+    sta $0200, x
+    clc
+    inx
+    inx
+    inx 
+    inx
+    cpx #$20
+    bne @Loop
 SkipUp:
 
 ; Down movement code
@@ -235,46 +199,19 @@ ReadDown:
     lda $4016
     and #%00000001
     beq SkipDown
-
-    lda $0200
+    ldx #$00
+@Loop:
+    lda $0200, x
     clc
     adc #PLAYERSPEED
-    sta $0200
-
-    lda $0204
+    sta $0200, x
     clc
-    adc #PLAYERSPEED
-    sta $0204
-
-    lda $0208
-    clc
-    adc #PLAYERSPEED
-    sta $0208
-
-    lda $020C
-    clc
-    adc #PLAYERSPEED
-    sta $020C
-
-    lda $0210
-    clc
-    adc #PLAYERSPEED
-    sta $0210
-
-    lda $0214
-    clc
-    adc #PLAYERSPEED
-    sta $0214
-
-    lda $0218
-    clc
-    adc #PLAYERSPEED
-    sta $0218
-
-    lda $021C
-    clc
-    adc #PLAYERSPEED
-    sta $021C
+    inx
+    inx
+    inx 
+    inx
+    cpx #$20
+    bne @Loop
 SkipDown:
 
 ; Left movement code
@@ -282,57 +219,27 @@ ReadLeft:
     lda $4016
     and #%00000001
     beq SkipLeft
-
-    lda $0203
+    ldx #$03
+@Loop:
+    lda $0200, x
     sec
     sbc #PLAYERSPEED
-    sta $0203
-
-    lda $0207
-    sec
-    sbc #PLAYERSPEED
-    sta $0207
-
-    lda $020B
-    sec
-    sbc #PLAYERSPEED
-    sta $020B
-
-    lda $020F
-    sec
-    sbc #PLAYERSPEED
-    sta $020F
-
-    lda $0213
-    sec
-    sbc #PLAYERSPEED
-    sta $0213
-
-    lda $0217
-    sec
-    sbc #PLAYERSPEED
-    sta $0217
-
-    lda $021B
-    sec
-    sbc #PLAYERSPEED
-    sta $021B
-
-    lda $021F
-    sec
-    sbc #PLAYERSPEED
-    sta $021F
+    sta $0200, x
+    clc
+    inx
+    inx
+    inx 
+    inx
+    cpx #$23
+    bne @Loop
 
     lda PlayerFacing
     cmp #$01 ; is player facing left?
     beq SkipFlipPlayerLeft
-
     lda #$05
     sta $020D
-
     lda #$06
     sta $0211
-
     lda #$01
     sta PlayerFacing
 
@@ -344,57 +251,27 @@ ReadRight:
     lda $4016
     and #%00000001
     beq SkipRight
-
-    lda $0203
+    ldx #$03
+@Loop:
+    lda $0200, x
     clc
     adc #PLAYERSPEED
-    sta $0203
-
-    lda $0207
+    sta $0200, x
     clc
-    adc #PLAYERSPEED
-    sta $0207
-
-    lda $020B
-    clc
-    adc #PLAYERSPEED
-    sta $020B
-
-    lda $020F
-    clc
-    adc #PLAYERSPEED
-    sta $020F
-
-    lda $0213
-    clc
-    adc #PLAYERSPEED
-    sta $0213
-
-    lda $0217
-    clc
-    adc #PLAYERSPEED
-    sta $0217
-
-    lda $021B
-    clc
-    adc #PLAYERSPEED
-    sta $021B
-
-    lda $021F
-    clc
-    adc #PLAYERSPEED
-    sta $021F
+    inx
+    inx
+    inx 
+    inx
+    cpx #$23
+    bne @Loop
 
     lda PlayerFacing
     cmp #$00 ; is player facing right?
     beq SkipFlipPlayerRight
-
     lda #$03
     sta $020D
-
     lda #$04
     sta $0211
-
     lda #$00
     sta PlayerFacing
 
@@ -436,24 +313,35 @@ Sprites:
     .byte $D8, $08, %00000000, $14
     .byte $D8, $09, %00000000, $1C
 
-BackgroundFeatures:
+NametableValues:
+
+InformationBar:
+    ; PIG
     .byte $20, $43, $19
     .byte $20, $44, $12
     .byte $20, $45, $10
 
+    ; x
     .byte $20, $63, $44
-    .byte $20, $64, $03
 
-    .byte $20, $4B, $0B
-    .byte $20, $4C, $0E
-    .byte $20, $4D, $0A
-    .byte $20, $4E, $0D
-    .byte $20, $4F, $1C
+    ; BEADS
+    .byte $20, $4D, $0B
+    .byte $20, $4E, $0E
+    .byte $20, $4F, $0A
+    .byte $20, $50, $0D
+    .byte $20, $51, $1C
 
-    .byte $20, $6B, $44
-    .byte $20, $6C, $00
-    .byte $20, $6D, $00
+    ; x
+    .byte $20, $6D, $44
 
+    ; STAGE
+    .byte $20, $58, $1C
+    .byte $20, $59, $1D
+    .byte $20, $5A, $0A
+    .byte $20, $5B, $10
+    .byte $20, $5C, $0E
+
+SpaceBackground:
     ; star cluster
     .byte $21, $78, $29
     .byte $21, $79, $2A
@@ -470,6 +358,9 @@ BackgroundFeatures:
     .byte $23, $1A, $26
     .byte $23, $39, $27
     .byte $23, $3A, $28
+
+Version:
+    .byte $0A, $15, $19, $11, $0A
 
 AttributeTable:
     .byte %01010101, %01010101, %01010101, %01010101, %01010101, %01010101, %01010101, %01010101
