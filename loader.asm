@@ -221,3 +221,33 @@ LoadRoom:
     sta PPUDATA
     iny
     jmp @Loop
+
+CheckNeighbor:
+    lda (PlayerRoom), y
+    sta TempPointer
+    iny
+    lda (PlayerRoom), y
+    sta TempPointer+1
+    lda TempPointer
+    cmp #$00
+    bne @Continue
+    rts
+@Continue:
+    sta PlayerRoom
+    lda TempPointer+1
+    sta PlayerRoom+1
+    jsr DisableScreen
+    lda PigSpawnPositions, x
+    cmp #$02
+    bcs @LR
+    tay
+    jsr SetPlayerY
+@LR:
+    tax
+    jsr SetPlayerX
+@AfterLR:
+    jsr ClearBackground
+    jsr LoadInformationBar
+    jsr LoadRoom
+    jsr EnableScreen
+    rts

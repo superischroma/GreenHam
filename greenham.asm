@@ -181,9 +181,9 @@ ReadStart:
     jsr LoadInformationBar
     jsr LoadSpacePalette
     jsr LoadPigSprite
-    lda #<SpaceRoomB
+    lda #<SpaceRoomA
     sta PlayerRoom
-    lda #>SpaceRoomB
+    lda #>SpaceRoomA
     sta PlayerRoom+1
     jsr LoadRoom
     jsr EnableScreen
@@ -195,6 +195,14 @@ ReadUp:
     lda $4016
     and #%00000001
     beq SkipUp
+    lda $0200
+    cmp #$07
+    bcs @SkipRoomCheck
+    ldx #$00
+    ldy #$02
+    jsr CheckNeighbor
+    jmp SkipUp
+@SkipRoomCheck:
     ldx #$00
 @Loop:
     lda $0200, x
@@ -215,6 +223,14 @@ ReadDown:
     lda $4016
     and #%00000001
     beq SkipDown
+    lda $0200
+    cmp #$CC
+    bcc @SkipRoomCheck
+    ldx #$01
+    ldy #$04
+    jsr CheckNeighbor
+    jmp SkipDown
+@SkipRoomCheck:
     ldx #$00
 @Loop:
     lda $0200, x
@@ -235,6 +251,14 @@ ReadLeft:
     lda $4016
     and #%00000001
     beq SkipLeft
+    lda $0203
+    cmp #$08
+    bcs @SkipRoomCheck
+    ldx #$02
+    ldy #$06
+    jsr CheckNeighbor
+    jmp SkipLeft
+@SkipRoomCheck:
     ldx #$03
 @Loop:
     lda $0200, x
@@ -267,6 +291,14 @@ ReadRight:
     lda $4016
     and #%00000001
     beq SkipRight
+    lda $0203
+    cmp #$ED
+    bcc @SkipRoomCheck
+    ldx #$03
+    ldy #$08
+    jsr CheckNeighbor
+    jmp SkipRight
+@SkipRoomCheck:
     ldx #$03
 @Loop:
     lda $0200, x
@@ -333,6 +365,12 @@ PigSprite:
 
 BananaSprite:
     .byte $0E, %00000001
+
+PigSpawnPositions:
+    .byte $1E ; top
+    .byte $C4 ; down
+    .byte $E0 ; left
+    .byte $0F ; right
 
 NametableValues:
 
