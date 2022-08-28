@@ -20,6 +20,7 @@ PlayerBeads:
 ; 00 - Title screen
 ; 01 - Space stage
 ; 02-08 - TBD
+; 09 - Options
 PlayerStage:
     .byte $00
 
@@ -27,6 +28,18 @@ PlayerStage:
 ; 00 - right
 ; 01 - left
 PlayerFacing:
+    .byte $00
+
+PlayerRoom:
+    .byte $00, $00
+
+TempPointer:
+    .byte $00, $00
+
+TempLayer:
+    .byte $00
+
+SelectedOption:
     .byte $00
 
 OverflowCounter: ; counting overflows for loops which exceed 256 iterations
@@ -103,30 +116,9 @@ LoadPalettes:
     cpx #$20
     bne @Loop
 
-LoadSprites:
-    ldx #$00
-@Loop:
-    lda Sprites, x
-    sta $0200, x
-    inx 
-    cpx #$20
-    bne @Loop
-
+LoadItems:
     jsr ClearBackground
-
-LoadAttributes:
-    lda PPUSTATUS
-    lda #$23
-    sta PPUADDR
-    lda #$C0
-    sta PPUADDR
-    ldx #$00
-@Loop:
-    lda AttributeTable, x
-    sta PPUDATA
-    inx
-    cpx #$08
-    bne @Loop
+    jsr LoadTitleScreen
 
 EnableRendering:    
     lda #%10010000
@@ -170,9 +162,33 @@ ReadSelect:
 
 ReadStart:
     lda $4016
-;    and #%00000001
-;    beq SkipStart
-;SkipStart:
+    and #%00000001
+    beq SkipStart
+    ldx PlayerStage
+    cpx #$00
+    bne SkipStart
+    ldx SelectedOption
+    cpx #$00
+    beq @TitleStartOption
+    ;cpx #$01
+    ;beq @TitleOptionsOption
+    jmp SkipStart
+@TitleStartOption:
+    jsr DisableScreen
+    lda #$01
+    jsr SetStageValue
+    jsr ClearBackground
+    jsr LoadInformationBar
+    jsr LoadSpacePalette
+    jsr LoadPigSprite
+    lda #<SpaceRoomB
+    sta PlayerRoom
+    lda #>SpaceRoomB
+    sta PlayerRoom+1
+    jsr LoadRoom
+    jsr EnableScreen
+    ;jmp SkipStart
+SkipStart:
 
 ; Up movement code
 ReadUp:
@@ -292,28 +308,113 @@ CleanNMI:
 
 Palettes:
     ; Background palettes
-    .byte $0F, $02, $11, $30
-	.byte $0F, $3A, $29, $09
-	.byte $0F, $39, $3A, $3B
-	.byte $0F, $3D, $3E, $0F
+	.byte $0F, $3A, $29, $09 ; stage palette
+    .byte $0F, $3A, $29, $09 ; generic/text palette: black, pale green, green, dark green
+	.byte $0F, $0F, $0F, $0F
+	.byte $0F, $0F, $0F, $0F
 
     ; Sprite palettes
 	.byte $0F, $09, $39, $2A ; Green and black
-	.byte $0F, $38, $39, $0F
-	.byte $0F, $1C, $15, $14
-	.byte $0F, $02, $38, $3C
+	.byte $0F, $38, $39, $0F ; Yellow and black
+	.byte $0F, $0F, $0F, $0F
+	.byte $0F, $0F, $0F, $0F
 
-Sprites:
-    .byte $C8, $00, %00000000, $0F
-    .byte $C8, $01, %00000000, $17
-    .byte $D0, $02, %00000000, $09
-    .byte $D0, $03, %00000000, $11 ; tiles will change to 5 and 6 if turned left 0x20D
-    .byte $D0, $04, %00000000, $19 ; 0x211
-    .byte $D8, $07, %00000000, $0C
-    .byte $D8, $08, %00000000, $14
-    .byte $D8, $09, %00000000, $1C
+Sprites: ; SPRITES
+
+PigSprite:
+    .byte $74, $00, %00000000, $0F
+    .byte $74, $01, %00000000, $17
+    .byte $7C, $02, %00000000, $09
+    .byte $7C, $03, %00000000, $11
+    .byte $7C, $04, %00000000, $19 
+    .byte $84, $07, %00000000, $0C
+    .byte $84, $08, %00000000, $14
+    .byte $84, $09, %00000000, $1C
+
+BananaSprite:
+    .byte $0E, %00000001
 
 NametableValues:
+
+TitleScreen:
+    .byte $21, $2B, $36
+    .byte $21, $4B, $37 ; G
+
+    .byte $21, $2C, $38
+    .byte $21, $4C, $39 ; R
+
+    .byte $21, $2D, $3A
+    .byte $21, $4D, $3B ; E
+
+    .byte $21, $2E, $3A
+    .byte $21, $4E, $3B ; E
+
+    .byte $21, $2F, $3C
+    .byte $21, $4F, $3D ; N
+
+    .byte $21, $30, $35
+    .byte $21, $50, $35 ; Space
+
+    .byte $21, $31, $3E
+    .byte $21, $51, $3F ; H
+
+    .byte $21, $32, $40
+    .byte $21, $52, $3F ; A
+
+    .byte $21, $33, $41
+    .byte $21, $53, $42 ; M
+
+    .byte $21, $0A, $2D ; top-left corner
+
+    .byte $21, $0B, $2E
+    .byte $21, $0C, $2E
+    .byte $21, $0D, $2E
+    .byte $21, $0E, $2E
+    .byte $21, $0F, $2E
+    .byte $21, $10, $2E ; top straight
+    .byte $21, $11, $2E
+    .byte $21, $12, $2E
+    .byte $21, $13, $2E
+
+    .byte $21, $14, $2F ; top-right corner
+
+    .byte $21, $34, $34
+    .byte $21, $54, $34 ; right straight
+
+    .byte $21, $74, $32 ; bottom-right corner
+
+    .byte $21, $73, $31 ; bottom straight
+    .byte $21, $72, $31
+    .byte $21, $71, $31
+    .byte $21, $70, $31
+    .byte $21, $6F, $31
+    .byte $21, $6E, $31
+    .byte $21, $6D, $31
+    .byte $21, $6C, $31
+    .byte $21, $6B, $31
+
+    .byte $21, $6A, $30 ; bottom-left corner
+
+    .byte $21, $4A, $33 ; left straight
+    .byte $21, $2A, $33
+
+    .byte $29, $EB, $44 ; > (default selection)
+
+    ; START
+    .byte $29, $ED, $1C
+    .byte $29, $EE, $1D
+    .byte $29, $EF, $0A
+    .byte $29, $F0, $1B
+    .byte $29, $F1, $1D
+
+    ; OPTIONS
+    .byte $2A, $4C, $18
+    .byte $2A, $4D, $19
+    .byte $2A, $4E, $1D
+    .byte $2A, $4F, $12
+    .byte $2A, $50, $18
+    .byte $2A, $51, $17
+    .byte $2A, $52, $1C
 
 InformationBar:
     ; PIG
@@ -322,7 +423,7 @@ InformationBar:
     .byte $20, $45, $10
 
     ; x
-    .byte $20, $63, $44
+    .byte $20, $63, $43
 
     ; BEADS
     .byte $20, $4D, $0B
@@ -332,7 +433,7 @@ InformationBar:
     .byte $20, $51, $1C
 
     ; x
-    .byte $20, $6D, $44
+    .byte $20, $6D, $43
 
     ; STAGE
     .byte $20, $58, $1C
@@ -341,30 +442,74 @@ InformationBar:
     .byte $20, $5B, $10
     .byte $20, $5C, $0E
 
-SpaceBackground:
-    ; star cluster
-    .byte $21, $78, $29
-    .byte $21, $79, $2A
-    .byte $21, $98, $2B
-    .byte $21, $99, $2C
+; Room storage format:
+; Background pattern (1 word) - memory address of pattern
+; Neighboring rooms (4 words) - memory addresses to the rooms which can be entered by approaching the sides of the screen (up, down, left, right; 0 for no room)
+; Background (32 bytes) - Tiles for filling the background pattern
 
-    ; bottom half star cluster
-    .byte $20, $C8, $2B
-    .byte $20, $C9, $2C
+BGPatternA:
+    .byte $C2, $D6, $D7 ; 1, 2
+    .byte $00
+    .byte $1C, $1D, $24, $25, $44, $45, $8F, $90, $AF, $B0, $DA, $DB, $FA, $FB, $E9, $EA ; 2, 4, 4, 4, 2
+    .byte $00
+    .byte $25, $75, $76, $ED, $EE ; 1, 2, 4 (half)
+    .byte $00
+    .byte $0D, $0E, $21, $46, $47, $66, $67, $7B ; 4 (half), 1, 4, 1
+    .byte $00
 
-    .byte $22, $03, $29
+BGPatternB:
+    .byte $CB, $CC, $F8 ; 2, 1
+    .byte $00
+    .byte $46, $47, $66, $67, $52, $B9, $BA, $D9, $DA, $CF ; 4, 1, 4, 1
+    .byte $00
+    .byte $02, $03, $2A, $2B, $4A, $4B, $5C, $5D, $90, $91, $C3, $D8, $EE, $EF ; 2, 4, 2, 2, 1, 1, 2
+    .byte $00
+    .byte $27, $59, $5A, $79, $7A ; 1, 4
+    .byte $00
 
-    .byte $23, $19, $25
-    .byte $23, $1A, $26
-    .byte $23, $39, $27
-    .byte $23, $3A, $28
+SpacePalette:
+    .byte $0F, $02, $11, $30
+
+SpaceRoomA:
+    .word BGPatternA
+    .word 0, 0, 0, SpaceRoomB
+
+    .byte $2A
+    .byte $2B, $2C
+    .byte $2B, $2C
+    .byte $25, $26, $27, $28
+    .byte $29, $2A, $2B, $2C
+    .byte $29, $2A, $2B, $2C
+    .byte $29, $2A
+    .byte $29
+    .byte $2B, $2C
+    .byte $25, $26, $27, $28
+    .byte $2A
+    .byte $29, $2A, $2B, $2C
+    .byte $2A
+
+SpaceRoomB:
+    .word BGPatternB
+    .word 0, 0, SpaceRoomA, 0
+
+    .byte $2B, $2C
+    .byte $2A
+    .byte $29, $2A, $2B, $2C
+    .byte $29
+    .byte $25, $26, $27, $28
+    .byte $2A
+    .byte $29, $2A
+    .byte $25, $26, $27, $28
+    .byte $2B, $2C
+    .byte $2B, $2C
+    .byte $29
+    .byte $2A
+    .byte $29, $2A
+    .byte $2A
+    .byte $29, $2A, $2B, $2C
 
 Version:
-    .byte $0A, $15, $19, $11, $0A
-
-AttributeTable:
-    .byte %01010101, %01010101, %01010101, %01010101, %01010101, %01010101, %01010101, %01010101
-    .byte %01010101, %01010101, %01010101, %01010101, %01010101, %01010101, %01010101, %01010101
+    .byte $0A, $15, $19, $11, $0A ; ALPHA
 
     .segment "VECTORS"
 

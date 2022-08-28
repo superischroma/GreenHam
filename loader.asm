@@ -2,7 +2,7 @@
 
 LoadInformationBar:
     ldx #$00
-@Loop:
+@TileLoop:
     lda PPUSTATUS
     lda InformationBar, x
     sta PPUADDR
@@ -14,7 +14,20 @@ LoadInformationBar:
     sta PPUDATA
     inx
     cpx #45
-    bne @Loop
+    bne @TileLoop
+
+    lda PPUSTATUS
+    lda #$23
+    sta PPUADDR
+    lda #$C0
+    sta PPUADDR
+    ldx #$00
+@AttrLoop:
+    lda #%01010101
+    sta PPUDATA
+    inx
+    cpx #$08
+    bne @AttrLoop
 
     jsr LoadLives
     jsr LoadBeads
@@ -80,15 +93,40 @@ LoadVersion:
     bne @Loop
     rts
 
+LoadTitleScreen:
+    lda #$00
+    sta SelectedOption
+    ldx #$00
+@Loop:
+    lda PPUSTATUS
+    lda TitleScreen, x
+    sta PPUADDR
+    inx
+    lda TitleScreen, x
+    sta PPUADDR
+    inx
+    lda TitleScreen, x
+    sta PPUDATA
+    inx
+    cpx #171
+    bne @Loop
+
+    jsr LoadVersion
+    rts
+
+LoadPigSprite:
+    ldx #$00
+@Loop:
+    lda PigSprite, x
+    sta $0200, x
+    inx 
+    cpx #$20
+    bne @Loop
+    rts
+
 ClearBackground:
     lda PPUSTATUS
-    ldy #$00
     lda #$20
-ClearSecondBackground:
-    cpy #$01
-    bne SkipSecondBackground
-    lda #$24
-SkipSecondBackground:
     sta PPUADDR
     lda #$00
     sta PPUADDR
@@ -100,10 +138,7 @@ SkipSecondBackground:
     sta PPUDATA
     cpx #$FF
     bne @AfterOverflowCheck
-    lda OverflowCounter
-    clc
-    adc #$01
-    sta OverflowCounter
+    inc OverflowCounter
 @AfterOverflowCheck:
     inx
     cpx #$C0
@@ -111,7 +146,78 @@ SkipSecondBackground:
     lda OverflowCounter
     cmp #$03
     bne @Loop
-    iny
-    cpy #$02
-    bne ClearSecondBackground
+    lda #$00
+    sta OverflowCounter
     rts
+
+EnableScreen:
+    lda #%00011110
+    sta PPUMASK
+    rts
+
+DisableScreen:
+    lda #%00000000
+    sta PPUMASK
+    rts
+
+LoadSpacePalette:
+    lda PPUSTATUS
+    lda #$3F
+    sta PPUADDR
+    lda #$00
+    sta PPUADDR
+    ldx #$00
+@Loop:
+    lda SpacePalette, x
+    sta PPUDATA
+    inx
+    cpx #$04
+    bne @Loop
+    rts
+
+LoadRoom:
+    ldy #$00
+    lda (PlayerRoom), y
+    sta TempPointer
+    iny
+    lda (PlayerRoom), y
+    sta TempPointer+1
+    lda #$00
+    sta TempLayer
+    ldy #$0A
+@Loop:
+    lda (PlayerRoom), y
+    pha ; a - tile
+    tya
+    clc
+    adc TempLayer
+    sec
+    sbc #$0A
+    tay
+    lda (TempPointer), y
+    tax ; x - board location
+    tya
+    clc
+    adc #$0A
+    sec
+    sbc TempLayer
+    tay
+    cpx #$00
+    bne @SkipLayerCheck
+    pla
+    inc TempLayer
+    lda TempLayer
+    cmp #$04
+    bne @Loop
+    rts
+@SkipLayerCheck:
+    lda PPUSTATUS
+    lda #$20
+    clc
+    adc TempLayer
+    sta PPUADDR
+    stx PPUADDR
+    pla
+    sta PPUDATA
+    iny
+    jmp @Loop
