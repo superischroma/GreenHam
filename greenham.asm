@@ -36,6 +36,15 @@ PlayerRoom:
 TempPointer:
     .byte $00, $00
 
+CurrentKeyframeSet:
+    .word 0
+
+CurrentKeyframe:
+    .byte $00
+
+KeyframeCounter:
+    .byte $00
+
 TempLayer:
     .byte $00
 
@@ -136,6 +145,34 @@ NMI:
     lda #$02
     sta OAMDMA
 
+ChangeKeyframe:
+    lda CurrentKeyframeSet+1
+    cmp #$00
+    beq @SkipChangeKeyframe
+    lda KeyframeCounter
+    cmp #12
+    bne @IncrementKeyframeCounter
+    lda #$00
+    sta KeyframeCounter
+    lda PPUSTATUS
+    lda #$3F
+    sta PPUADDR
+    lda #$03
+    sta PPUADDR
+    ldy CurrentKeyframe
+    lda (CurrentKeyframeSet), y
+    sta PPUDATA
+    iny
+    sty CurrentKeyframe
+    lda (CurrentKeyframeSet), y
+    cmp #$FF
+    bne @IncrementKeyframeCounter
+    lda #$00
+    sta CurrentKeyframe
+@IncrementKeyframeCounter:
+    inc KeyframeCounter
+@SkipChangeKeyframe:
+
 LatchController:
     lda #$01
     sta $4016
@@ -175,6 +212,10 @@ ReadStart:
     jmp SkipStart
 @TitleStartOption:
     jsr DisableScreen
+    lda #<SpaceKeyframes
+    sta CurrentKeyframeSet
+    lda #>SpaceKeyframes
+    sta CurrentKeyframeSet+1
     lda #$01
     jsr SetStageValue
     jsr ClearBackground
@@ -507,6 +548,9 @@ BGPatternB:
 
 SpacePalette:
     .byte $0F, $02, $11, $30
+
+SpaceKeyframes:
+    .byte $30, $20, $10, $00, $10, $20, $FF
 
 SpaceRoomA:
     .word BGPatternA
