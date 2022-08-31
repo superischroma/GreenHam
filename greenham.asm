@@ -525,6 +525,7 @@ InformationBar:
 ; Background pattern (1 word) - memory address of pattern
 ; Neighboring rooms (4 words) - memory addresses to the rooms which can be entered by approaching the sides of the screen (up, down, left, right; 0 for no room)
 ; Background (32 bytes) - Tiles for filling the background pattern
+; Enemies (4 bytes per, terminated by null byte) - Entities which spawn on the screen and will attack the player
 
 BGPatternA:
     .byte $C2, $D6, $D7 ; 1, 2
@@ -569,6 +570,14 @@ SpaceRoomA:
     .byte $2A
     .byte $29, $2A, $2B, $2C
     .byte $2A
+
+    .byte $2D, $0E, %00000001, $C1
+    .byte $2D, $0F, %00000001, $C9
+    .byte $35, $10, %00000001, $C1
+    .byte $35, $11, %00000001, $C9
+    .byte $3D, $12, %00000001, $C1
+    .byte $3D, $13, %00000001, $C9
+    .byte $00
 
 SpaceRoomB:
     .word BGPatternB
