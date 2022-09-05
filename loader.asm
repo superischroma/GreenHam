@@ -257,8 +257,19 @@ CheckNeighbor:
     tax
     jsr SetPlayerX
 @AfterLR:
+    jsr UnloadEnemies
     jsr ClearBackground
     jsr LoadInformationBar
     jsr LoadRoom
     jsr EnableScreen
+    rts
+
+UnloadEnemies:
+    ldx #$20
+    lda #$FE
+@Loop:
+    sta $0200, x
+    inx
+    cpx #$00
+    bne @Loop
     rts

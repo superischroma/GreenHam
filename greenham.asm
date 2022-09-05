@@ -599,6 +599,8 @@ SpaceRoomB:
     .byte $2A
     .byte $29, $2A, $2B, $2C
 
+    .byte $00
+
 Version:
     .byte $0A, $15, $19, $11, $0A ; ALPHA
 
