@@ -213,7 +213,7 @@ LoadRoom:
     ldx #$00
 @EnemyLoop:
     lda (PlayerRoom), y
-    cmp #$00
+    cmp #$FF
     beq @AfterEnemyLoop
     sta $0220, x
     inx

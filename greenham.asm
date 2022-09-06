@@ -36,13 +36,13 @@ PlayerRoom:
 TempPointer:
     .byte $00, $00
 
-CurrentKeyframeSet:
+CurrentBGKeyframeSet:
     .word 0
 
-CurrentKeyframe:
+CurrentBGKeyframe:
     .byte $00
 
-KeyframeCounter:
+BGKeyframeCounter:
     .byte $00
 
 TempLayer:
@@ -145,33 +145,33 @@ NMI:
     lda #$02
     sta OAMDMA
 
-ChangeKeyframe:
-    lda CurrentKeyframeSet+1
+ChangeBGKeyframe:
+    lda CurrentBGKeyframeSet+1
     cmp #$00
-    beq @SkipChangeKeyframe
-    lda KeyframeCounter
+    beq @SkipChangeBGKeyframe
+    lda BGKeyframeCounter
     cmp #12
-    bne @IncrementKeyframeCounter
+    bne @IncrementBGKeyframeCounter
     lda #$00
-    sta KeyframeCounter
+    sta BGKeyframeCounter
     lda PPUSTATUS
     lda #$3F
     sta PPUADDR
     lda #$03
     sta PPUADDR
-    ldy CurrentKeyframe
-    lda (CurrentKeyframeSet), y
+    ldy CurrentBGKeyframe
+    lda (CurrentBGKeyframeSet), y
     sta PPUDATA
     iny
-    sty CurrentKeyframe
-    lda (CurrentKeyframeSet), y
+    sty CurrentBGKeyframe
+    lda (CurrentBGKeyframeSet), y
     cmp #$FF
-    bne @IncrementKeyframeCounter
+    bne @IncrementBGKeyframeCounter
     lda #$00
-    sta CurrentKeyframe
-@IncrementKeyframeCounter:
-    inc KeyframeCounter
-@SkipChangeKeyframe:
+    sta CurrentBGKeyframe
+@IncrementBGKeyframeCounter:
+    inc BGKeyframeCounter
+@SkipChangeBGKeyframe:
 
 LatchController:
     lda #$01
@@ -212,10 +212,10 @@ ReadStart:
     jmp SkipStart
 @TitleStartOption:
     jsr DisableScreen
-    lda #<SpaceKeyframes
-    sta CurrentKeyframeSet
-    lda #>SpaceKeyframes
-    sta CurrentKeyframeSet+1
+    lda #<SpaceBGKeyframes
+    sta CurrentBGKeyframeSet
+    lda #>SpaceBGKeyframes
+    sta CurrentBGKeyframeSet+1
     lda #$01
     jsr SetStageValue
     jsr ClearBackground
@@ -404,9 +404,6 @@ PigSprite:
     .byte $84, $08, %00000000, $14
     .byte $84, $09, %00000000, $1C
 
-BananaSprite:
-    .byte $0E, %00000001
-
 PigSpawnPositions:
     .byte $1E ; top
     .byte $C4 ; down
@@ -550,7 +547,7 @@ BGPatternB:
 SpacePalette:
     .byte $0F, $02, $11, $30
 
-SpaceKeyframes:
+SpaceBGKeyframes:
     .byte $30, $20, $10, $00, $10, $20, $FF
 
 SpaceRoomA:
@@ -577,7 +574,7 @@ SpaceRoomA:
     .byte $35, $11, %00000001, $C9
     .byte $3D, $12, %00000001, $C1
     .byte $3D, $13, %00000001, $C9
-    .byte $00
+    .byte $FF
 
 SpaceRoomB:
     .word BGPatternB
@@ -599,7 +596,7 @@ SpaceRoomB:
     .byte $2A
     .byte $29, $2A, $2B, $2C
 
-    .byte $00
+    .byte $FF
 
 Version:
     .byte $0A, $15, $19, $11, $0A ; ALPHA
