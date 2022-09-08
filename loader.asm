@@ -183,14 +183,14 @@ LoadRoom:
     lda (PlayerRoom), y
     sta TempPointer+1
     lda #$00
-    sta TempLayer
+    sta TempValue
     ldy #$0A
 @Loop:
     lda (PlayerRoom), y
     pha ; a - tile
     tya
     clc
-    adc TempLayer
+    adc TempValue
     sec
     sbc #$0A
     tay
@@ -200,13 +200,13 @@ LoadRoom:
     clc
     adc #$0A
     sec
-    sbc TempLayer
+    sbc TempValue
     tay
     cpx #$00
     bne @SkipLayerCheck
     pla
-    inc TempLayer
-    lda TempLayer
+    inc TempValue
+    lda TempValue
     cmp #$04
     bne @Loop
     ldy #42
@@ -225,7 +225,7 @@ LoadRoom:
     lda PPUSTATUS
     lda #$20
     clc
-    adc TempLayer
+    adc TempValue
     sta PPUADDR
     stx PPUADDR
     pla

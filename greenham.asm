@@ -45,7 +45,7 @@ CurrentBGKeyframe:
 BGKeyframeCounter:
     .byte $00
 
-TempLayer:
+TempValue:
     .byte $00
 
 SelectedOption:
@@ -144,6 +144,9 @@ NMI:
     sta OAMADDR
     lda #$02
     sta OAMDMA
+
+    lda #$20
+    jsr PullBanana
 
 ChangeBGKeyframe:
     lda CurrentBGKeyframeSet+1
