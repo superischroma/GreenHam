@@ -273,3 +273,36 @@ UnloadEnemies:
     cpx #$00
     bne @Loop
     rts
+
+;UnloadInformationBar:
+;    ldx #$00
+;    lda PPUSTATUS
+;    lda #$20
+;    sta PPUADDR
+;    lda #$00
+;    sta PPUADDR
+;@Loop:
+;    lda #$24
+;    sta PPUDATA
+;    inx
+;    cpx #$80
+;    bne @Loop
+;    rts
+
+;LoadPauseScreen:
+;    jsr DisableScreen
+;    jsr UnloadInformationBar
+;    ldx #$00
+;    lda PPUSTATUS
+;    lda #$20
+;    sta PPUADDR
+;    lda #$50
+;    sta PPUADDR
+;@Loop:
+;    lda PauseDisplay, x
+;    sta PPUDATA
+;    inx
+;    cpx #$0B
+;    bne @Loop
+;    jsr EnableScreen
+;    rts

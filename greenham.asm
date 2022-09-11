@@ -30,6 +30,13 @@ PlayerStage:
 PlayerFacing:
     .byte $00
 
+;             --- paused (0 - no, 1 - yes)
+;             | -- player facing direction (0 - right, 1 - left)
+;             | |
+; 0 0 0 0 0 0 0 0
+GameStatus:
+    .byte $00
+
 PlayerRoom:
     .byte $00, $00
 
@@ -46,9 +53,12 @@ BGKeyframeCounter:
     .byte $00
 
 TempValue:
-    .byte $00
+    .byte $00, $00
 
 SelectedOption:
+    .byte $00
+
+BananaPullTimer:
     .byte $00
 
 OverflowCounter: ; counting overflows for loops which exceed 256 iterations
@@ -145,37 +155,6 @@ NMI:
     lda #$02
     sta OAMDMA
 
-    lda #$20
-    jsr PullBanana
-
-ChangeBGKeyframe:
-    lda CurrentBGKeyframeSet+1
-    cmp #$00
-    beq @SkipChangeBGKeyframe
-    lda BGKeyframeCounter
-    cmp #12
-    bne @IncrementBGKeyframeCounter
-    lda #$00
-    sta BGKeyframeCounter
-    lda PPUSTATUS
-    lda #$3F
-    sta PPUADDR
-    lda #$03
-    sta PPUADDR
-    ldy CurrentBGKeyframe
-    lda (CurrentBGKeyframeSet), y
-    sta PPUDATA
-    iny
-    sty CurrentBGKeyframe
-    lda (CurrentBGKeyframeSet), y
-    cmp #$FF
-    bne @IncrementBGKeyframeCounter
-    lda #$00
-    sta CurrentBGKeyframe
-@IncrementBGKeyframeCounter:
-    inc BGKeyframeCounter
-@SkipChangeBGKeyframe:
-
 LatchController:
     lda #$01
     sta $4016
@@ -206,6 +185,7 @@ ReadStart:
     beq SkipStart
     ldx PlayerStage
     cpx #$00
+;    bne @PauseOption
     bne SkipStart
     ldx SelectedOption
     cpx #$00
@@ -231,8 +211,25 @@ ReadStart:
     sta PlayerRoom+1
     jsr LoadRoom
     jsr EnableScreen
-    ;jmp SkipStart
+;    jmp SkipStart
+;@PauseOption:
+;    lda GameStatus
+;    and #%00000010
+;    cmp #$02 ; is paused?
+;    bne @EnablePause
+;    jmp SkipStart
+;@EnablePause:
+;    jsr LoadPauseScreen
+;    lda #%00000010
+;    ora GameStatus
+;    sta GameStatus
 SkipStart:
+
+;    lda GameStatus
+;    and #%00000010
+;    cmp #$02 ; is paused?
+;    bne ReadA
+;    jmp CleanNMI
 
 ; Up movement code
 ReadUp:
@@ -317,15 +314,17 @@ ReadLeft:
     cpx #$23
     bne @Loop
 
-    lda PlayerFacing
-    cmp #$01 ; is player facing left?
+    lda GameStatus
+    and #%00000001
+    cmp #%00000001 ; is player facing left?
     beq SkipFlipPlayerLeft
     lda #$05
     sta $020D
     lda #$06
     sta $0211
-    lda #$01
-    sta PlayerFacing
+    lda #%00000001
+    ora GameStatus
+    sta GameStatus
 
 SkipFlipPlayerLeft:
 SkipLeft:
@@ -357,18 +356,51 @@ ReadRight:
     cpx #$23
     bne @Loop
 
-    lda PlayerFacing
-    cmp #$00 ; is player facing right?
+    lda GameStatus
+    and #%00000001
+    cmp #%00000000 ; is player facing right?
     beq SkipFlipPlayerRight
     lda #$03
     sta $020D
     lda #$04
     sta $0211
-    lda #$00
-    sta PlayerFacing
+    lda #%00000001
+    eor GameStatus
+    sta GameStatus
 
 SkipFlipPlayerRight:
 SkipRight:
+
+    lda #$20
+    jsr PullBanana
+
+ChangeBGKeyframe:
+    lda CurrentBGKeyframeSet+1
+    cmp #$00
+    beq @SkipChangeBGKeyframe
+    lda BGKeyframeCounter
+    cmp #12
+    bne @IncrementBGKeyframeCounter
+    lda #$00
+    sta BGKeyframeCounter
+    lda PPUSTATUS
+    lda #$3F
+    sta PPUADDR
+    lda #$03
+    sta PPUADDR
+    ldy CurrentBGKeyframe
+    lda (CurrentBGKeyframeSet), y
+    sta PPUDATA
+    iny
+    sty CurrentBGKeyframe
+    lda (CurrentBGKeyframeSet), y
+    cmp #$FF
+    bne @IncrementBGKeyframeCounter
+    lda #$00
+    sta CurrentBGKeyframe
+@IncrementBGKeyframeCounter:
+    inc BGKeyframeCounter
+@SkipChangeBGKeyframe:
 
 CleanNMI:
     lda #%10010000
@@ -571,12 +603,6 @@ SpaceRoomA:
     .byte $29, $2A, $2B, $2C
     .byte $2A
 
-    .byte $2D, $0E, %00000001, $C1
-    .byte $2D, $0F, %00000001, $C9
-    .byte $35, $10, %00000001, $C1
-    .byte $35, $11, %00000001, $C9
-    .byte $3D, $12, %00000001, $C1
-    .byte $3D, $13, %00000001, $C9
     .byte $FF
 
 SpaceRoomB:
@@ -599,10 +625,21 @@ SpaceRoomB:
     .byte $2A
     .byte $29, $2A, $2B, $2C
 
+    .byte $2D, $0E, %00000001, $C1
+    .byte $2D, $0F, %00000001, $C9
+    .byte $35, $10, %00000001, $C1
+    .byte $35, $11, %00000001, $C9
+    .byte $3D, $12, %00000001, $C1
+    .byte $3D, $13, %00000001, $C9
     .byte $FF
 
 Version:
     .byte $0A, $15, $19, $11, $0A ; ALPHA
+
+;PauseDisplay:
+;    .byte $10, $0A, $16, $0E ; GAME
+;    .byte $24 ; (space)
+;    .byte $19, $0A, $1E, $1C, $0E, $0D ; PAUSED
 
     .segment "VECTORS"
 
