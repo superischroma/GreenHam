@@ -613,7 +613,7 @@ SpaceRoomB:
     .byte $2A
     .byte $29, $2A, $2B, $2C
     .byte $29
-    .byte $25, $26, $27, $28
+    .byte $45, $46, $47, $48
     .byte $2A
     .byte $29, $2A
     .byte $25, $26, $27, $28
