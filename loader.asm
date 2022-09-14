@@ -166,6 +166,16 @@ LoadSpacePalette:
     sta PPUADDR
     lda #$00
     sta PPUADDR
+    jsr @PaletteL
+    lda PPUSTATUS
+    lda #$3F
+    sta PPUADDR
+    lda #$18
+    sta PPUADDR
+    jsr @PaletteL
+    rts
+
+@PaletteL:
     ldx #$00
 @Loop:
     lda SpacePalette, x
@@ -209,17 +219,62 @@ LoadRoom:
     lda TempValue
     cmp #$04
     bne @Loop
-    ldy #42
+    ldy #44
     ldx #$00
 @EnemyLoop:
     lda (PlayerRoom), y
     cmp #$FF
     beq @AfterEnemyLoop
-    sta $0220, x
+    sta $0230, x
     inx
     iny
     jmp @EnemyLoop
 @AfterEnemyLoop:
+    ldy #42
+    lda (PlayerRoom), y
+    cmp #$00
+    beq @AfterBeadLoop
+    ldx #$20
+@BeadLoop:
+    lda #$00
+    sta TempValue
+    lda #$16
+    sta TempValue+1
+    ldy #43
+    lda (PlayerRoom), y ; load y-pos
+    cpx #$28
+    bcc @SkipYMod
+    clc 
+    adc #$08
+@SkipYMod:
+    sta $0200, x
+    inx
+    lda TempValue+1
+    sta $0200, x
+    inc TempValue+1
+    inx
+    lda #%00000010
+    sta $0200, x
+    inx
+    ldy #42
+    lda (PlayerRoom), y
+    ldy TempValue
+    cpy #$08
+    bne @SetXMod
+    clc
+    adc #$08
+    ldy #$00
+    sty TempValue
+    jmp @SkipXMod
+@SetXMod:
+    ldy #$08
+    sty TempValue
+@SkipXMod:
+    sta $0200, x
+    inx
+    cpx #$30
+    bne @BeadLoop
+@AfterBeadLoop:
     rts
 @SkipLayerCheck:
     lda PPUSTATUS

@@ -371,16 +371,16 @@ ReadRight:
 SkipFlipPlayerRight:
 SkipRight:
 
-    lda #$20
+    lda #$30
     jsr PullBanana
 
-ChangeBGKeyframe:
+RunKeyframeChange:
     lda CurrentBGKeyframeSet+1
     cmp #$00
-    beq @SkipChangeBGKeyframe
+    beq @Skip
     lda BGKeyframeCounter
     cmp #12
-    bne @IncrementBGKeyframeCounter
+    bne @IncrementCounter
     lda #$00
     sta BGKeyframeCounter
     lda PPUSTATUS
@@ -395,12 +395,12 @@ ChangeBGKeyframe:
     sty CurrentBGKeyframe
     lda (CurrentBGKeyframeSet), y
     cmp #$FF
-    bne @IncrementBGKeyframeCounter
+    bne @IncrementCounter
     lda #$00
     sta CurrentBGKeyframe
-@IncrementBGKeyframeCounter:
+@IncrementCounter:
     inc BGKeyframeCounter
-@SkipChangeBGKeyframe:
+@Skip:
 
 CleanNMI:
     lda #%10010000
@@ -603,6 +603,8 @@ SpaceRoomA:
     .byte $29, $2A, $2B, $2C
     .byte $2A
 
+    .byte $00, $00
+
     .byte $FF
 
 SpaceRoomB:
@@ -613,7 +615,7 @@ SpaceRoomB:
     .byte $2A
     .byte $29, $2A, $2B, $2C
     .byte $29
-    .byte $45, $46, $47, $48
+    .byte $29, $2A, $2B, $2C
     .byte $2A
     .byte $29, $2A
     .byte $25, $26, $27, $28
@@ -625,12 +627,15 @@ SpaceRoomB:
     .byte $2A
     .byte $29, $2A, $2B, $2C
 
+    .byte $AE, $7C
+
     .byte $2D, $0E, %00000001, $C1
     .byte $2D, $0F, %00000001, $C9
     .byte $35, $10, %00000001, $C1
     .byte $35, $11, %00000001, $C9
     .byte $3D, $12, %00000001, $C1
     .byte $3D, $13, %00000001, $C9
+    
     .byte $FF
 
 Version:
