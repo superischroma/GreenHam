@@ -166,16 +166,6 @@ LoadSpacePalette:
     sta PPUADDR
     lda #$00
     sta PPUADDR
-    jsr @PaletteL
-    lda PPUSTATUS
-    lda #$3F
-    sta PPUADDR
-    lda #$18
-    sta PPUADDR
-    jsr @PaletteL
-    rts
-
-@PaletteL:
     ldx #$00
 @Loop:
     lda SpacePalette, x
@@ -235,11 +225,11 @@ LoadRoom:
     cmp #$00
     beq @AfterBeadLoop
     ldx #$20
-@BeadLoop:
     lda #$00
     sta TempValue
     lda #$16
     sta TempValue+1
+@BeadLoop:
     ldy #43
     lda (PlayerRoom), y ; load y-pos
     cpx #$28
@@ -253,7 +243,7 @@ LoadRoom:
     sta $0200, x
     inc TempValue+1
     inx
-    lda #%00000010
+    lda #%00000000
     sta $0200, x
     inx
     ldy #42
@@ -326,6 +316,16 @@ UnloadEnemies:
     sta $0200, x
     inx
     cpx #$00
+    bne @Loop
+    rts
+
+UnloadBead:
+    ldx #$20
+    lda #$FE
+@Loop:
+    sta $0200, x
+    inx
+    cpx #$30
     bne @Loop
     rts
 

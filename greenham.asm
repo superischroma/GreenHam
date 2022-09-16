@@ -40,6 +40,9 @@ GameStatus:
 PlayerRoom:
     .byte $00, $00
 
+BeadStates:
+    .byte %00000000
+
 TempPointer:
     .byte $00, $00
 
@@ -373,6 +376,8 @@ SkipRight:
 
     lda #$30
     jsr PullBanana
+
+    jsr CheckBeadCollect
 
 RunKeyframeChange:
     lda CurrentBGKeyframeSet+1
