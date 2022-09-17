@@ -201,5 +201,9 @@ CheckBeadCollect:
     bcc @End
     jsr IncrementBeads
     jsr UnloadBead
+    lda BeadStates
+    ldy #44
+    ora (PlayerRoom), y
+    sta BeadStates
 @End:
     rts

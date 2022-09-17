@@ -209,7 +209,7 @@ LoadRoom:
     lda TempValue
     cmp #$04
     bne @Loop
-    ldy #44
+    ldy #45
     ldx #$00
 @EnemyLoop:
     lda (PlayerRoom), y
@@ -220,10 +220,13 @@ LoadRoom:
     iny
     jmp @EnemyLoop
 @AfterEnemyLoop:
-    ldy #42
+    ldy #44
     lda (PlayerRoom), y
-    cmp #$00
+    cmp #%00000000
     beq @AfterBeadLoop
+    and BeadStates
+    cmp #$00
+    bne @AfterBeadLoop
     ldx #$20
     lda #$00
     sta TempValue

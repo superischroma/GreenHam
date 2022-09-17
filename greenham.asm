@@ -35,11 +35,13 @@ PlayerFacing:
 ;             | |
 ; 0 0 0 0 0 0 0 0
 GameStatus:
-    .byte $00
+    .byte %00000000
 
+; Memory address of current room
 PlayerRoom:
     .byte $00, $00
 
+; Tracks whether beads have been collected in stage
 BeadStates:
     .byte %00000000
 
@@ -427,9 +429,9 @@ Palettes:
 	.byte $0F, $0F, $0F, $0F
 
     ; Sprite palettes
-	.byte $0F, $09, $39, $2A ; Green and black
+    .byte $0F, $09, $39, $2A ; Green and black
 	.byte $0F, $38, $39, $0F ; Yellow and black
-	.byte $0F, $0F, $0F, $0F
+	.byte $0F, $07, $17, $16
 	.byte $0F, $0F, $0F, $0F
 
 Sprites: ; SPRITES
@@ -587,6 +589,18 @@ BGPatternB:
 SpacePalette:
     .byte $0F, $02, $11, $30
 
+SandsPalette:
+    .byte $27, $0F, $28, $38
+
+SkyPalette:
+    .byte $22, $0F, $30, $1A
+
+MagicPalette:
+    .byte $33, $35, $17, $30
+
+OceanPalette:
+    .byte $02, $1A, $33, $34
+
 SpaceBGKeyframes:
     .byte $30, $20, $10, $00, $10, $20, $FF
 
@@ -608,7 +622,7 @@ SpaceRoomA:
     .byte $29, $2A, $2B, $2C
     .byte $2A
 
-    .byte $00, $00
+    .byte $00, $00, %00000000
 
     .byte $FF
 
@@ -632,7 +646,7 @@ SpaceRoomB:
     .byte $2A
     .byte $29, $2A, $2B, $2C
 
-    .byte $AE, $7C
+    .byte $AE, $7C, %00000001
 
     .byte $2D, $0E, %00000001, $C1
     .byte $2D, $0F, %00000001, $C9
