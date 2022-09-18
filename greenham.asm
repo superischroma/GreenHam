@@ -423,16 +423,16 @@ CleanNMI:
 
 Palettes:
     ; Background palettes
-	.byte $0F, $3A, $29, $09 ; stage palette
+    .byte $0F, $3A, $29, $09 ; stage palette
     .byte $0F, $3A, $29, $09 ; generic/text palette: black, pale green, green, dark green
-	.byte $0F, $0F, $0F, $0F
-	.byte $0F, $0F, $0F, $0F
+    .byte $0F, $0F, $0F, $0F
+    .byte $0F, $0F, $0F, $0F
 
     ; Sprite palettes
     .byte $0F, $09, $39, $2A ; Green and black
-	.byte $0F, $38, $39, $0F ; Yellow and black
-	.byte $0F, $07, $17, $16
-	.byte $0F, $0F, $0F, $0F
+    .byte $0F, $38, $39, $0F ; Yellow and black
+    .byte $0F, $07, $17, $16
+    .byte $0F, $0F, $0F, $0F
 
 Sprites: ; SPRITES
 
