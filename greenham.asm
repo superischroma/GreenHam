@@ -106,13 +106,13 @@ Reset:
 
 ClearMemory:
     lda #$00
-	sta	$0000, x
-	sta	$0100, x
-	sta	$0300, x
-	sta	$0400, x
-	sta	$0500, x
-	sta	$0600, x
-	sta	$0700, x
+    sta $0000, x
+    sta $0100, x
+    sta $0300, x
+    sta $0400, x
+    sta $0500, x
+    sta $0600, x
+    sta $0700, x
     lda #$FE
     sta $0200, x
     inx 
