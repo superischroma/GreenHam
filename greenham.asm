@@ -78,8 +78,6 @@ OverflowCounter: ; counting overflows for loops which exceed 256 iterations
 
     .segment "STARTUP"
 
-; Unused segment
-
     .segment "CODE"
 
     .include "loader.asm"
@@ -120,11 +118,11 @@ ClearMemory:
 
     jsr WaitForVBlank
 
-InitializeData:
-    ; Initialize lives
+    ; data initialization section
+
     lda #$03
     ldx #$01
-    sta PlayerLives, x
+    sta PlayerLives, x ; set lives to 3
 
 LoadPalettes:
     lda PPUSTATUS
@@ -140,11 +138,11 @@ LoadPalettes:
     cpx #$20
     bne @Loop
 
-LoadItems:
+    ; startup loads
     jsr ClearBackground
     jsr LoadTitleScreen
 
-EnableRendering:    
+    ; enable rendering
     lda #%10010000
     sta PPUCTRL
 
@@ -160,7 +158,7 @@ NMI:
     lda #$02
     sta OAMDMA
 
-LatchController:
+    ; latch controller
     lda #$01
     sta $4016
     lda #$00
@@ -434,8 +432,6 @@ Palettes:
     .byte $0F, $07, $17, $16
     .byte $0F, $0F, $0F, $0F
 
-Sprites: ; SPRITES
-
 PigSprite:
     .byte $74, $00, %00000000, $0F
     .byte $74, $01, %00000000, $17
@@ -560,6 +556,14 @@ InformationBar:
     .byte $20, $5B, $10
     .byte $20, $5C, $0E
 
+Version:
+    .byte $0A, $15, $19, $11, $0A ; ALPHA
+
+;PauseDisplay:
+;    .byte $10, $0A, $16, $0E ; GAME
+;    .byte $24 ; (space)
+;    .byte $19, $0A, $1E, $1C, $0E, $0D ; PAUSED
+
 ; Room storage format:
 ; Background pattern (1 word) - memory address of pattern
 ; Neighboring rooms (4 words) - memory addresses to the rooms which can be entered by approaching the sides of the screen (up, down, left, right; 0 for no room)
@@ -586,84 +590,11 @@ BGPatternB:
     .byte $27, $59, $5A, $79, $7A ; 1, 4
     .byte $00
 
-SpacePalette:
-    .byte $0F, $02, $11, $30
-
-SandsPalette:
-    .byte $27, $0F, $28, $38
-
-SkyPalette:
-    .byte $22, $0F, $30, $1A
-
-MagicPalette:
-    .byte $33, $35, $17, $30
-
-OceanPalette:
-    .byte $02, $1A, $33, $34
-
-SpaceBGKeyframes:
-    .byte $30, $20, $10, $00, $10, $20, $FF
-
-SpaceRoomA:
-    .word BGPatternA
-    .word 0, 0, 0, SpaceRoomB
-
-    .byte $2A
-    .byte $2B, $2C
-    .byte $2B, $2C
-    .byte $25, $26, $27, $28
-    .byte $29, $2A, $2B, $2C
-    .byte $29, $2A, $2B, $2C
-    .byte $29, $2A
-    .byte $29
-    .byte $2B, $2C
-    .byte $25, $26, $27, $28
-    .byte $2A
-    .byte $29, $2A, $2B, $2C
-    .byte $2A
-
-    .byte $00, $00, %00000000
-
-    .byte $FF
-
-SpaceRoomB:
-    .word BGPatternB
-    .word 0, 0, SpaceRoomA, 0
-
-    .byte $2B, $2C
-    .byte $2A
-    .byte $29, $2A, $2B, $2C
-    .byte $29
-    .byte $29, $2A, $2B, $2C
-    .byte $2A
-    .byte $29, $2A
-    .byte $25, $26, $27, $28
-    .byte $2B, $2C
-    .byte $2B, $2C
-    .byte $29
-    .byte $2A
-    .byte $29, $2A
-    .byte $2A
-    .byte $29, $2A, $2B, $2C
-
-    .byte $AE, $7C, %00000001
-
-    .byte $2D, $0E, %00000001, $C1
-    .byte $2D, $0F, %00000001, $C9
-    .byte $35, $10, %00000001, $C1
-    .byte $35, $11, %00000001, $C9
-    .byte $3D, $12, %00000001, $C1
-    .byte $3D, $13, %00000001, $C9
-    
-    .byte $FF
-
-Version:
-    .byte $0A, $15, $19, $11, $0A ; ALPHA
-
-;PauseDisplay:
-;    .byte $10, $0A, $16, $0E ; GAME
-;    .byte $24 ; (space)
-;    .byte $19, $0A, $1E, $1C, $0E, $0D ; PAUSED
+    .include "leveldata/space.asm"
+    .include "leveldata/sands.asm"
+    .include "leveldata/sky.asm"
+    .include "leveldata/magic.asm"
+    .include "leveldata/ocean.asm"
 
     .segment "VECTORS"
 
