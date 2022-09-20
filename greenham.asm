@@ -18,7 +18,7 @@ PlayerBeads:
 
 ; Current stage of the player
 ; 00 - Title screen
-; 01 - Space stage
+; 01 - SSF
 ; 02-08 - TBD
 ; 09 - Options
 PlayerStage:
@@ -61,6 +61,9 @@ TempValue:
     .byte $00, $00
 
 SelectedOption:
+    .byte $00
+
+TitleCardTimer:
     .byte $00
 
 BananaPullTimer:
@@ -158,7 +161,13 @@ NMI:
     lda #$02
     sta OAMDMA
 
-    ; latch controller
+    lda TitleCardTimer
+    cmp #$00
+    beq LatchController
+    jsr TitleCardEvent
+    jmp CleanNMI
+
+LatchController:
     lda #$01
     sta $4016
     lda #$00
@@ -198,22 +207,25 @@ ReadStart:
     jmp SkipStart
 @TitleStartOption:
     jsr DisableScreen
-    lda #<SpaceBGKeyframes
+    lda #<SSFBGKeyframes
     sta CurrentBGKeyframeSet
-    lda #>SpaceBGKeyframes
+    lda #>SSFBGKeyframes
     sta CurrentBGKeyframeSet+1
     lda #$01
     jsr SetStageValue
     jsr ClearBackground
-    jsr LoadInformationBar
-    jsr LoadSpacePalette
-    jsr LoadPigSprite
-    lda #<SpaceRoomA
-    sta PlayerRoom
-    lda #>SpaceRoomA
-    sta PlayerRoom+1
-    jsr LoadRoom
+    lda #<SSFPalette
+    sta TempPointer
+    lda #>SSFPalette
+    sta TempPointer+1
+    jsr LoadLevelPalette
     jsr EnableScreen
+    lda #<SSFTitleCard
+    sta TempPointer
+    lda #>SSFTitleCard
+    sta TempPointer+1
+    jsr RunTitleCard
+    jmp CleanNMI
 ;    jmp SkipStart
 ;@PauseOption:
 ;    lda GameStatus
@@ -531,33 +543,23 @@ TitleScreen:
     .byte $2A, $52, $1C
 
 InformationBar:
-    ; PIG
-    .byte $20, $43, $19
-    .byte $20, $44, $12
-    .byte $20, $45, $10
+    ; pig icon
+    .byte $20, $49, $64
 
     ; x
-    .byte $20, $63, $43
+    .byte $20, $4A, $43
 
-    ; BEADS
-    .byte $20, $4D, $0B
-    .byte $20, $4E, $0E
-    .byte $20, $4F, $0A
-    .byte $20, $50, $0D
-    .byte $20, $51, $1C
+    ; bead icon
+    .byte $20, $53, $65
 
     ; x
-    .byte $20, $6D, $43
-
-    ; STAGE
-    .byte $20, $58, $1C
-    .byte $20, $59, $1D
-    .byte $20, $5A, $0A
-    .byte $20, $5B, $10
-    .byte $20, $5C, $0E
+    .byte $20, $54, $43
 
 Version:
     .byte $0A, $15, $19, $11, $0A ; ALPHA
+
+TitleCardField:
+    .byte $0F, $12, $0E, $15, $0D ; FIELD
 
 ;PauseDisplay:
 ;    .byte $10, $0A, $16, $0E ; GAME
@@ -590,11 +592,17 @@ BGPatternB:
     .byte $27, $59, $5A, $79, $7A ; 1, 4
     .byte $00
 
-    .include "leveldata/space.asm"
-    .include "leveldata/sands.asm"
-    .include "leveldata/sky.asm"
-    .include "leveldata/magic.asm"
-    .include "leveldata/ocean.asm"
+TitleCards:
+    .word SSFTitleCard, 0, 0, 0, 0, 0, 0, 0
+
+LevelPalettes:
+    .word SSFPalette, SPFPalette, FHFPalette, MSFPalette, ADFPalette, 0, 0, 0
+
+    .include "leveldata/SSF.asm"
+    .include "leveldata/SPF.asm"
+    .include "leveldata/FHF.asm"
+    .include "leveldata/MSF.asm"
+    .include "leveldata/ADF.asm"
 
     .segment "VECTORS"
 

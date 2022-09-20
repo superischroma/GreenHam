@@ -13,7 +13,7 @@ LoadInformationBar:
     lda InformationBar, x
     sta PPUDATA
     inx
-    cpx #45
+    cpx #12
     bne @TileLoop
 
     lda PPUSTATUS
@@ -31,7 +31,6 @@ LoadInformationBar:
 
     jsr LoadLives
     jsr LoadBeads
-    jsr LoadStage
     rts
 
 LoadLives:
@@ -42,7 +41,7 @@ LoadLives:
     sta PPUADDR
     txa
     clc
-    adc #$64
+    adc #$4B
     sta PPUADDR
     lda PlayerLives, x
     sta PPUDATA
@@ -59,7 +58,7 @@ LoadBeads:
     sta PPUADDR
     txa
     clc
-    adc #$6E
+    adc #$55
     sta PPUADDR
     lda PlayerBeads, x
     sta PPUDATA
@@ -160,18 +159,18 @@ DisableScreen:
     sta PPUMASK
     rts
 
-LoadSpacePalette:
+LoadLevelPalette:
     lda PPUSTATUS
     lda #$3F
     sta PPUADDR
     lda #$00
     sta PPUADDR
-    ldx #$00
+    ldy #$00
 @Loop:
-    lda SpacePalette, x
+    lda (TempPointer), y
     sta PPUDATA
-    inx
-    cpx #$04
+    iny
+    cpy #$04
     bne @Loop
     rts
 
@@ -330,6 +329,117 @@ UnloadBead:
     inx
     cpx #$30
     bne @Loop
+    rts
+
+RunTitleCard: ; start title card timer
+    lda #$00
+    sta TempValue
+    lda #$01
+    sta TitleCardTimer
+    rts
+
+TitleCardEvent: ; title card frame tick
+    lda TitleCardTimer
+    cmp #$30
+    beq @Next
+    inc TitleCardTimer
+    rts
+@Next:
+    lda #$01
+    sta TitleCardTimer
+    lda TempValue
+    cmp #$04
+    beq @Exit
+    cmp #$01
+    bcs @Wait
+    ; load title card
+    jsr DisableScreen
+    lda PPUSTATUS
+    ldy #$00
+    lda (TempPointer), y
+    sta PPUADDR
+    iny
+    lda (TempPointer), y
+    sta PPUADDR
+    iny
+    lda (TempPointer), y
+    tax
+    iny
+@MainCardLoop:
+    lda (TempPointer), y
+    sta PPUDATA
+    dex
+    iny
+    cpx #$00
+    bne @MainCardLoop
+    lda #$24
+    sta PPUDATA
+    ldx #$00
+@FieldCardLoop:
+    lda TitleCardField, x
+    sta PPUDATA
+    inx
+    cpx #$05
+    bne @FieldCardLoop
+    lda PPUSTATUS
+    lda #$21
+    sta PPUADDR
+    lda #$CC
+    sta PPUADDR
+    ldx #$00
+    jsr @GraphicLoop
+    lda PPUSTATUS
+    lda #$21
+    sta PPUADDR
+    lda #$EC
+    sta PPUADDR
+    ldx #$00
+    jsr @GraphicLoop
+    ldx #%00000101
+    jsr @SetFieldAttrLine
+    jsr EnableScreen
+@Wait:
+    inc TempValue
+    rts
+@Exit:
+    lda #$00
+    sta TitleCardTimer
+    jsr DisableScreen
+    ldx #%00000000
+    jsr @SetFieldAttrLine
+    jsr ClearBackground
+    jsr LoadInformationBar
+    jsr LoadPigSprite
+    lda #<SSFRoomA
+    sta PlayerRoom
+    lda #>SSFRoomA
+    sta PlayerRoom+1
+    jsr LoadRoom
+    jsr EnableScreen
+    rts
+
+@GraphicLoop:
+    lda (TempPointer), y
+    sta PPUDATA
+    inx
+    iny
+    cpx #$08
+    bne @GraphicLoop
+    rts
+
+@SetFieldAttrLine:
+    ldy #$00
+    lda PPUSTATUS
+    lda #$23
+    sta PPUADDR
+    lda #$D8
+    sta PPUADDR
+@SFALLoop:
+    txa
+    sta PPUDATA
+    iny
+    cpy #$08
+    bne @SFALLoop
     rts
 
 ;UnloadInformationBar:
