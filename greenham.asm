@@ -37,6 +37,14 @@ PlayerFacing:
 GameStatus:
     .byte %00000000
 
+; button press states (A, B, Select, Start, Up, Down, Left, Right)
+Buttons:
+    .byte %00000000
+
+; prevents certain buttons from being held
+ButtonTapChecker:
+    .byte %00000000
+
 ; Memory address of current room
 PlayerRoom:
     .byte $00, $00
@@ -168,32 +176,23 @@ NMI:
     jmp CleanNMI
 
 LatchController:
+    lda #$00
+    sta Buttons
     lda #$01
     sta $4016
     lda #$00
     sta $4016
-
-ReadA:
+    ldx #$08
+@Loop:
     lda $4016
-;    and #%00000001
-;    beq SkipA
-;SkipA:
+    lsr a
+    rol Buttons
+    dex
+    bne @Loop
 
-ReadB:
-    lda $4016
-;    and #%00000001
-;    beq SkipB
-;SkipB:
-
-ReadSelect:
-    lda $4016
-;    and #%00000001
-;    beq SkipSelect
-;SkipSelect:
-
-ReadStart:
-    lda $4016
-    and #%00000001
+    ; Start button
+    lda Buttons
+    and #%00010000
     beq SkipStart
     ldx PlayerStage
     cpx #$00
@@ -247,9 +246,8 @@ SkipStart:
 ;    jmp CleanNMI
 
 ; Up movement code
-ReadUp:
-    lda $4016
-    and #%00000001
+    lda Buttons
+    and #%00001000
     beq SkipUp
     lda $0200
     cmp #$07
@@ -263,7 +261,7 @@ ReadUp:
 @Loop:
     lda $0200, x
     sec
-    sbc #PLAYERSPEED
+    sbc #PlayerSpeed
     sta $0200, x
     clc
     inx
@@ -275,9 +273,8 @@ ReadUp:
 SkipUp:
 
 ; Down movement code
-ReadDown:
-    lda $4016
-    and #%00000001
+    lda Buttons
+    and #%00000100
     beq SkipDown
     lda $0200
     cmp #$CC
@@ -291,7 +288,7 @@ ReadDown:
 @Loop:
     lda $0200, x
     clc
-    adc #PLAYERSPEED
+    adc #PlayerSpeed
     sta $0200, x
     clc
     inx
@@ -303,9 +300,8 @@ ReadDown:
 SkipDown:
 
 ; Left movement code
-ReadLeft:
-    lda $4016
-    and #%00000001
+    lda Buttons
+    and #%00000010
     beq SkipLeft
     lda $0203
     cmp #$08
@@ -319,7 +315,7 @@ ReadLeft:
 @Loop:
     lda $0200, x
     sec
-    sbc #PLAYERSPEED
+    sbc #PlayerSpeed
     sta $0200, x
     clc
     inx
@@ -345,8 +341,7 @@ SkipFlipPlayerLeft:
 SkipLeft:
 
 ; Right movement code
-ReadRight:
-    lda $4016
+    lda Buttons
     and #%00000001
     beq SkipRight
     lda $0203
@@ -361,7 +356,7 @@ ReadRight:
 @Loop:
     lda $0200, x
     clc
-    adc #PLAYERSPEED
+    adc #PlayerSpeed
     sta $0200, x
     clc
     inx

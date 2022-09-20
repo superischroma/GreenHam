@@ -90,7 +90,7 @@ SetStageValue:
 ; a - offset
 PullBanana:
     ldx BananaPullTimer
-    cpx #BANANAPULLDELAY
+    cpx #BananaPullDelay
     beq @DoneDelayCheck
     inc BananaPullTimer
     rts

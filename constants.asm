@@ -9,5 +9,6 @@ PPUADDR = $2006
 PPUDATA = $2007
 OAMDMA = $4014
 ; Constant game settings
-PLAYERSPEED = $01
-BANANAPULLDELAY = $01
+Debug = $00
+PlayerSpeed = $01
+BananaPullDelay = $01
