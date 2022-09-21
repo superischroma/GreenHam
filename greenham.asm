@@ -41,8 +41,12 @@ GameStatus:
 Buttons:
     .byte %00000000
 
+; actual button press states
+AbsoluteButtons:
+    .byte %00000000
+
 ; prevents certain buttons from being held
-ButtonTapChecker:
+DisabledButtons:
     .byte %00000000
 
 ; Memory address of current room
@@ -176,7 +180,12 @@ NMI:
     jmp CleanNMI
 
 LatchController:
+    lda AbsoluteButtons
+    and #%11110000
+    sta DisabledButtons
+
     lda #$00
+    sta AbsoluteButtons
     sta Buttons
     lda #$01
     sta $4016
@@ -184,12 +193,28 @@ LatchController:
     sta $4016
     ldx #$08
 @Loop:
+    lda DisabledButtons
+    and #%10000000
+    beq @Enabled ; is button enabled? if so, branch
     lda $4016
     lsr a
+    rol AbsoluteButtons
+    clc
     rol Buttons
+    rol DisabledButtons
+    dex
+    bne @Loop
+@Enabled:
+    lda $4016
+    lsr a
+    rol AbsoluteButtons
+    rol Buttons
+    clc
+    rol DisabledButtons
     dex
     bne @Loop
 
+ChkStart:
     ; Start button
     lda Buttons
     and #%00010000
