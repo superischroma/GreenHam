@@ -18,9 +18,16 @@ PlayerBeads:
 
 ; Current stage of the player
 ; 00 - Title screen
-; 01 - SSF
-; 02-08 - TBD
+; 01 - Starry Sights Field
+; 02 - Sandy Pyramid Field
+; 03 - Fluttering Heights Field
+; 04 - Magical Spell Field
+; 05 - Aquatic Depths Field
+; 06 - Unnamed field
+; 07 - Unnamed field
+; 08 - Unnamed field
 ; 09 - Options
+; 0A - Field Select
 PlayerStage:
     .byte $00
 
@@ -43,10 +50,6 @@ Buttons:
 
 ; actual button press states
 AbsoluteButtons:
-    .byte %00000000
-
-; prevents certain buttons from being held
-DisabledButtons:
     .byte %00000000
 
 ; Memory address of current room
@@ -73,6 +76,9 @@ TempValue:
     .byte $00, $00
 
 SelectedOption:
+    .byte $00
+
+OptionValue:
     .byte $00
 
 TitleCardTimer:
@@ -181,8 +187,15 @@ NMI:
 
 LatchController:
     lda AbsoluteButtons
+    ldx PlayerStage
+    cpx #$0A
+    beq @AllDisabled
     and #%11110000
-    sta DisabledButtons
+    jmp @DoneDisabled
+@AllDisabled:
+    and #%11111111
+@DoneDisabled:
+    tay
 
     lda #$00
     sta AbsoluteButtons
@@ -193,24 +206,34 @@ LatchController:
     sta $4016
     ldx #$08
 @Loop:
-    lda DisabledButtons
+    tya
     and #%10000000
     beq @Enabled ; is button enabled? if so, branch
     lda $4016
     lsr a
     rol AbsoluteButtons
     clc
-    rol Buttons
-    rol DisabledButtons
+    asl Buttons
+    clc
+    tya
+    asl a
+    tay
     dex
     bne @Loop
 @Enabled:
     lda $4016
     lsr a
     rol AbsoluteButtons
-    rol Buttons
     clc
-    rol DisabledButtons
+    rol Buttons
+    lda AbsoluteButtons
+    and #%00000001
+    ora Buttons
+    sta Buttons
+    clc
+    tya
+    asl a
+    tay
     dex
     bne @Loop
 
@@ -220,6 +243,8 @@ ChkStart:
     and #%00010000
     beq SkipStart
     ldx PlayerStage
+    cpx #$0A
+    beq @FieldSelectScreen
     cpx #$00
 ;    bne @PauseOption
     bne SkipStart
@@ -230,27 +255,27 @@ ChkStart:
     ;beq @TitleOptionsOption
     jmp SkipStart
 @TitleStartOption:
-    jsr DisableScreen
-    lda #<SSFBGKeyframes
-    sta CurrentBGKeyframeSet
-    lda #>SSFBGKeyframes
-    sta CurrentBGKeyframeSet+1
+    lda AbsoluteButtons
+    and #%10000000
+    bne @FieldSelectOption ; is A pressed while pressing start? if so, branch to field select
+    ldx #$01
+    jsr LoadStage
+    jmp CleanNMI
+    jmp SkipStart
+@FieldSelectOption:
     lda #$01
+    sta OptionValue
+    jsr DisableScreen
+    lda #$0A
     jsr SetStageValue
     jsr ClearBackground
-    lda #<SSFPalette
-    sta TempPointer
-    lda #>SSFPalette
-    sta TempPointer+1
-    jsr LoadLevelPalette
+    jsr LoadFieldSelect
     jsr EnableScreen
-    lda #<SSFTitleCard
-    sta TempPointer
-    lda #>SSFTitleCard
-    sta TempPointer+1
-    jsr RunTitleCard
+    jmp SkipStart
+@FieldSelectScreen:
+    ldx OptionValue
+    jsr LoadStage
     jmp CleanNMI
-;    jmp SkipStart
 ;@PauseOption:
 ;    lda GameStatus
 ;    and #%00000010
@@ -325,9 +350,23 @@ SkipUp:
 SkipDown:
 
 ; Left movement code
+ChkLeft:
     lda Buttons
     and #%00000010
     beq SkipLeft
+    lda PlayerStage
+    cmp #$0A
+    bne @Movement
+    lda PPUSTATUS
+    lda #$21
+    sta PPUADDR
+    lda #$EF
+    sta PPUADDR
+    dec OptionValue
+    lda OptionValue
+    sta PPUDATA
+    jmp SkipLeft
+@Movement:
     lda $0203
     cmp #$08
     bcs @SkipRoomCheck
@@ -366,9 +405,23 @@ SkipFlipPlayerLeft:
 SkipLeft:
 
 ; Right movement code
+ChkRight:
     lda Buttons
     and #%00000001
     beq SkipRight
+    lda PlayerStage
+    cmp #$0A
+    bne @Movement
+    lda PPUSTATUS
+    lda #$21
+    sta PPUADDR
+    lda #$EF
+    sta PPUADDR
+    inc OptionValue
+    lda OptionValue
+    sta PPUDATA
+    jmp SkipRight
+@Movement:
     lda $0203
     cmp #$ED
     bcc @SkipRoomCheck
@@ -575,6 +628,10 @@ InformationBar:
     ; x
     .byte $20, $54, $43
 
+FieldSelect:
+    .byte $0F, $12, $0E, $15, $0D, $24, $1C, $0E, $15, $0E, $0C, $1D ; FIELD SELECT
+    .byte $67, $24, $01, $24, $44 ; < 1 >
+
 Version:
     .byte $0A, $15, $19, $11, $0A ; ALPHA
 
@@ -612,11 +669,7 @@ BGPatternB:
     .byte $27, $59, $5A, $79, $7A ; 1, 4
     .byte $00
 
-TitleCards:
-    .word SSFTitleCard, 0, 0, 0, 0, 0, 0, 0
-
-LevelPalettes:
-    .word SSFPalette, SPFPalette, FHFPalette, MSFPalette, ADFPalette, 0, 0, 0
+    .include "tables.asm"
 
     .include "leveldata/SSF.asm"
     .include "leveldata/SPF.asm"

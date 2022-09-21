@@ -1,4 +1,4 @@
-; Palette, BG keyframes, rooms for the Sandy Pyramids Field
+; Palette, BG keyframes, rooms for the Sandy Pyramid Field
 
 SPFPalette:
     .byte $27, $0F, $28, $38
@@ -6,10 +6,10 @@ SPFPalette:
 SPFBGKeyframes:
     .byte $38, $36, $27, $18, $27, $36, $FF ; flashing red
 
-SPFTitleCard: ; SANDY PYRAMIDS
-    .byte $21, $87
-    .byte 14
-    .byte $1C, $0A, $17, $0D, $22, $24, $19, $22, $1B, $0A, $16, $12, $0D, $1C
+SPFTitleCard: ; SANDY PYRAMID
+    .byte $21, $88
+    .byte 13
+    .byte $1C, $0A, $17, $0D, $22, $24, $19, $22, $1B, $0A, $16, $12, $0D
     .byte $45, $46, $49, $4A, $45, $46, $49, $4A, $47, $48, $4B, $4B, $47, $48, $4B, $4B
 
 SPFRoomA:

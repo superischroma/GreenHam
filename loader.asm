@@ -67,16 +67,6 @@ LoadBeads:
     bne @BeadsLoop
     rts
 
-LoadStage:
-    lda PPUSTATUS
-    lda #$20
-    sta PPUADDR
-    lda #$7A
-    sta PPUADDR
-    lda PlayerStage
-    sta PPUDATA
-    rts
-
 LoadVersion:
     ldx #$00
     lda PPUSTATUS
@@ -413,9 +403,14 @@ TitleCardEvent: ; title card frame tick
     jsr ClearBackground
     jsr LoadInformationBar
     jsr LoadPigSprite
-    lda #<SSFRoomA
+    ldx PlayerStage
+    dex
+    txa
+    asl a
+    tax
+    lda InitialRoomTable, x
     sta PlayerRoom
-    lda #>SSFRoomA
+    lda InitialRoomTable+1, x
     sta PlayerRoom+1
     jsr LoadRoom
     jsr EnableScreen
@@ -443,6 +438,67 @@ TitleCardEvent: ; title card frame tick
     iny
     cpy #$08
     bne @SFALLoop
+    rts
+
+LoadFieldSelect:
+    ldx #$00
+    lda PPUSTATUS
+    lda #$21
+    sta PPUADDR
+    lda #$AA
+    sta PPUADDR
+@TextLoop:
+    lda FieldSelect, x
+    sta PPUDATA
+    inx
+    cpx #12
+    bne @TextLoop
+    lda PPUSTATUS
+    lda #$21
+    sta PPUADDR
+    lda #$ED
+    sta PPUADDR
+@SelectorLoop:
+    lda FieldSelect, x
+    sta PPUDATA
+    inx
+    cpx #17
+    bne @SelectorLoop
+    rts
+
+LoadStage:
+    stx TempValue
+    jsr DisableScreen
+    dex
+    txa
+    asl a ; multiply by 2
+    tax
+    lda BGKeyframeSetTable, x
+    sta CurrentBGKeyframeSet
+    lda BGKeyframeSetTable+1, x
+    sta CurrentBGKeyframeSet+1
+    lda TempValue
+    jsr SetStageValue
+    txa
+    pha
+    jsr ClearBackground
+    pla
+    tax 
+    lda LevelPaletteTable, x
+    sta TempPointer
+    lda LevelPaletteTable+1, x
+    sta TempPointer+1
+    txa
+    pha
+    jsr LoadLevelPalette
+    jsr EnableScreen
+    pla
+    tax 
+    lda TitleCardTable, x
+    sta TempPointer
+    lda TitleCardTable+1, x
+    sta TempPointer+1
+    jsr RunTitleCard
     rts
 
 ;UnloadInformationBar:

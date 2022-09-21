@@ -84,7 +84,6 @@ SetPlayerX:
 ; Store the stage value in accumulator register before invoking
 SetStageValue:
     sta PlayerStage
-    jsr LoadStage
     rts
 
 ; a - offset
