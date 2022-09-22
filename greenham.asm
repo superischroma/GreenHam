@@ -87,6 +87,11 @@ TitleCardTimer:
 BananaPullTimer:
     .byte $00
 
+.if Debug = 1
+AudioTest: ; Running temporary audio tests
+    .byte $00, $00
+.endif
+
 OverflowCounter: ; counting overflows for loops which exceed 256 iterations
     .byte 0
 
@@ -169,6 +174,8 @@ LoadPalettes:
 
     lda #%00011110
     sta PPUMASK
+
+    jsr EnableAudio
 
 Infinite:
     jmp Infinite
@@ -477,8 +484,36 @@ SkipRight:
 
     lda #$30
     jsr PullBanana
-
     jsr CheckBeadCollect
+
+; --------------- AUDIO TEST DEBUG ONLY -----------------
+
+.if Debug = 1
+DebugRepeatTone:
+    lda AudioTest
+    cmp #$1A
+    bne @SkipSwitch
+    lda #$FF
+    sta AudioTest
+    lda AudioTest+1
+    eor #%00000001
+    sta AudioTest+1
+@SkipSwitch:
+    inc AudioTest
+
+    lda AudioTest+1
+    beq @SkipPlay
+    lda #$E0    ;0C9 is a C# in NTSC mode
+    sta $4002
+    lda #$00
+    sta $4003
+    lda AudioTest+1
+    eor #%00000001
+    sta AudioTest+1
+@SkipPlay:
+.endif
+
+; -------------------------------------------------------
 
 RunKeyframeChange:
     lda CurrentBGKeyframeSet+1

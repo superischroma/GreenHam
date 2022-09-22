@@ -509,16 +509,6 @@ DisplayValue:
     bne @Loop
     rts
 
-WriteOutTempValue2:
-    lda PPUSTATUS
-    lda #$20
-    sta PPUADDR
-    lda #$A3
-    sta PPUADDR
-    lda TempValue+1
-    sta PPUDATA
-    rts
-
 UnloadInformationBar:
     ldx #$00
     lda PPUSTATUS
@@ -550,4 +540,9 @@ LoadPauseScreen:
     cpx #$0B
     bne @Loop
     jsr EnableScreen
+    rts
+
+EnableAudio:
+    lda #$0F
+    sta $4015
     rts
