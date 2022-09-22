@@ -212,14 +212,15 @@ LatchController:
     lda $4016
     lsr a
     rol AbsoluteButtons
-    clc
     asl Buttons
     clc
     tya
     asl a
+    clc
     tay
     dex
     bne @Loop
+    jmp ChkStart
 @Enabled:
     lda $4016
     lsr a
@@ -233,6 +234,7 @@ LatchController:
     clc
     tya
     asl a
+    clc
     tay
     dex
     bne @Loop
@@ -246,7 +248,7 @@ ChkStart:
     cpx #$0A
     beq @FieldSelectScreen
     cpx #$00
-;    bne @PauseOption
+    bne @PauseOption
     bne SkipStart
     ldx SelectedOption
     cpx #$00
@@ -276,26 +278,34 @@ ChkStart:
     ldx OptionValue
     jsr LoadStage
     jmp CleanNMI
-;@PauseOption:
-;    lda GameStatus
-;    and #%00000010
-;    cmp #$02 ; is paused?
-;    bne @EnablePause
-;    jmp SkipStart
-;@EnablePause:
-;    jsr LoadPauseScreen
-;    lda #%00000010
-;    ora GameStatus
-;    sta GameStatus
+@PauseOption:
+    lda GameStatus
+    and #%00000010
+    cmp #$02 ; is paused?
+    bne @EnablePause
+    jsr DisableScreen
+    jsr UnloadInformationBar
+    jsr LoadInformationBar
+    lda #%11111101
+    and GameStatus
+    sta GameStatus
+    jsr EnableScreen
+    jmp SkipStart
+@EnablePause:
+    jsr LoadPauseScreen
+    lda #%00000010
+    ora GameStatus
+    sta GameStatus
 SkipStart:
 
-;    lda GameStatus
-;    and #%00000010
-;    cmp #$02 ; is paused?
-;    bne ReadA
-;    jmp CleanNMI
+    lda GameStatus
+    and #%00000010
+    cmp #$02 ; is paused?
+    bne ChkUp
+    jmp CleanNMI
 
 ; Up movement code
+ChkUp:
     lda Buttons
     and #%00001000
     beq SkipUp
@@ -357,6 +367,9 @@ ChkLeft:
     lda PlayerStage
     cmp #$0A
     bne @Movement
+    lda OptionValue
+    cmp #$01
+    beq SkipLeft
     lda PPUSTATUS
     lda #$21
     sta PPUADDR
@@ -412,6 +425,9 @@ ChkRight:
     lda PlayerStage
     cmp #$0A
     bne @Movement
+    lda OptionValue
+    cmp #$08
+    beq SkipRight
     lda PPUSTATUS
     lda #$21
     sta PPUADDR
@@ -632,16 +648,13 @@ FieldSelect:
     .byte $0F, $12, $0E, $15, $0D, $24, $1C, $0E, $15, $0E, $0C, $1D ; FIELD SELECT
     .byte $67, $24, $01, $24, $44 ; < 1 >
 
-Version:
-    .byte $0A, $15, $19, $11, $0A ; ALPHA
-
 TitleCardField:
     .byte $0F, $12, $0E, $15, $0D ; FIELD
 
-;PauseDisplay:
-;    .byte $10, $0A, $16, $0E ; GAME
-;    .byte $24 ; (space)
-;    .byte $19, $0A, $1E, $1C, $0E, $0D ; PAUSED
+PauseDisplay:
+    .byte $10, $0A, $16, $0E ; GAME
+    .byte $24 ; (space)
+    .byte $19, $0A, $1E, $1C, $0E, $0D ; PAUSED
 
 ; Room storage format:
 ; Background pattern (1 word) - memory address of pattern

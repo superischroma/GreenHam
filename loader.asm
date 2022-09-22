@@ -67,21 +67,6 @@ LoadBeads:
     bne @BeadsLoop
     rts
 
-LoadVersion:
-    ldx #$00
-    lda PPUSTATUS
-    lda #$20
-    sta PPUADDR
-    lda #$41
-    sta PPUADDR
-@Loop:
-    lda Version, x
-    sta PPUDATA
-    inx
-    cpx #$05
-    bne @Loop
-    rts
-
 LoadTitleScreen:
     lda #$00
     sta SelectedOption
@@ -99,8 +84,6 @@ LoadTitleScreen:
     inx
     cpx #171
     bne @Loop
-
-    jsr LoadVersion
     rts
 
 LoadPigSprite:
@@ -501,35 +484,70 @@ LoadStage:
     jsr RunTitleCard
     rts
 
-;UnloadInformationBar:
-;    ldx #$00
-;    lda PPUSTATUS
-;    lda #$20
-;    sta PPUADDR
-;    lda #$00
-;    sta PPUADDR
-;@Loop:
-;    lda #$24
-;    sta PPUDATA
-;    inx
-;    cpx #$80
-;    bne @Loop
-;    rts
+DisplayValue:
+    sta TempValue
+    lda PPUSTATUS
+    lda #$20
+    sta PPUADDR
+    lda #$83
+    sta PPUADDR
+    ldx #$00
+@Loop:
+    lda TempValue
+    and #%10000000
+    beq @Zero
+    lda #$01
+    sta PPUDATA
+    jmp @Restore
+@Zero:
+    lda #$00
+    sta PPUDATA
+@Restore:
+    inx
+    asl TempValue
+    cpx #$08
+    bne @Loop
+    rts
 
-;LoadPauseScreen:
-;    jsr DisableScreen
-;    jsr UnloadInformationBar
-;    ldx #$00
-;    lda PPUSTATUS
-;    lda #$20
-;    sta PPUADDR
-;    lda #$50
-;    sta PPUADDR
-;@Loop:
-;    lda PauseDisplay, x
-;    sta PPUDATA
-;    inx
-;    cpx #$0B
-;    bne @Loop
-;    jsr EnableScreen
-;    rts
+WriteOutTempValue2:
+    lda PPUSTATUS
+    lda #$20
+    sta PPUADDR
+    lda #$A3
+    sta PPUADDR
+    lda TempValue+1
+    sta PPUDATA
+    rts
+
+UnloadInformationBar:
+    ldx #$00
+    lda PPUSTATUS
+    lda #$20
+    sta PPUADDR
+    lda #$00
+    sta PPUADDR
+@Loop:
+    lda #$24
+    sta PPUDATA
+    inx
+    cpx #$80
+    bne @Loop
+    rts
+
+LoadPauseScreen:
+    jsr DisableScreen
+    jsr UnloadInformationBar
+    ldx #$00
+    lda PPUSTATUS
+    lda #$20
+    sta PPUADDR
+    lda #$4B
+    sta PPUADDR
+@Loop:
+    lda PauseDisplay, x
+    sta PPUDATA
+    inx
+    cpx #$0B
+    bne @Loop
+    jsr EnableScreen
+    rts
