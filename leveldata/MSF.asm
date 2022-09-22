@@ -1,7 +1,7 @@
 ; Palette, BG keyframes, rooms for the Magical Spell Field
 
 MSFPalette:
-    .byte $33, $24, $16, $30
+    .byte $34, $24, $16, $30
 
 MSFBGKeyframes:
     .byte $30, $20, $10, $00, $10, $20, $FF ; flashing white

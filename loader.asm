@@ -139,12 +139,24 @@ LoadLevelPalette:
     lda #$00
     sta PPUADDR
     ldy #$00
-@Loop:
+@Loop1:
     lda (TempPointer), y
     sta PPUDATA
     iny
     cpy #$04
-    bne @Loop
+    bne @Loop1
+    lda PPUSTATUS
+    lda #$3F
+    sta PPUADDR
+    lda #$14
+    sta PPUADDR
+    ldy #$00
+@Loop2:
+    lda (TempPointer), y
+    sta PPUDATA
+    iny
+    cpy #$04
+    bne @Loop2
     rts
 
 LoadRoom:
@@ -218,7 +230,7 @@ LoadRoom:
     sta $0200, x
     inc TempValue+1
     inx
-    lda #%00000000
+    lda #%00000001
     sta $0200, x
     inx
     ldy #42
@@ -291,16 +303,6 @@ UnloadEnemies:
     sta $0200, x
     inx
     cpx #$00
-    bne @Loop
-    rts
-
-UnloadBead:
-    ldx #$20
-    lda #$FE
-@Loop:
-    sta $0200, x
-    inx
-    cpx #$30
     bne @Loop
     rts
 

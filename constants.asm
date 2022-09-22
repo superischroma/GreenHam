@@ -11,4 +11,3 @@ OAMDMA = $4014
 ; Constant game settings
 Debug = 0
 PlayerSpeed = $01
-BananaPullDelay = $01

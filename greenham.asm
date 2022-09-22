@@ -109,6 +109,11 @@ OverflowCounter: ; counting overflows for loops which exceed 256 iterations
     .include "loader.asm"
     .include "player.asm"
 
+    .include "entity/Chop.asm"
+    .include "entity/Banana.asm"
+    .include "entity/BlackHole.asm"
+    .include "entity/Bead.asm"
+
 WaitForVBlank:
     bit PPUSTATUS
     bpl WaitForVBlank
@@ -324,19 +329,7 @@ ChkUp:
     jsr CheckNeighbor
     jmp SkipUp
 @SkipRoomCheck:
-    ldx #$00
-@Loop:
-    lda $0200, x
-    sec
-    sbc #PlayerSpeed
-    sta $0200, x
-    clc
-    inx
-    inx
-    inx 
-    inx
-    cpx #$20
-    bne @Loop
+    jsr MoveChopUp
 SkipUp:
 
 ; Down movement code
@@ -351,19 +344,7 @@ SkipUp:
     jsr CheckNeighbor
     jmp SkipDown
 @SkipRoomCheck:
-    ldx #$00
-@Loop:
-    lda $0200, x
-    clc
-    adc #PlayerSpeed
-    sta $0200, x
-    clc
-    inx
-    inx
-    inx 
-    inx
-    cpx #$20
-    bne @Loop
+    jsr MoveChopDown
 SkipDown:
 
 ; Left movement code
@@ -395,33 +376,7 @@ ChkLeft:
     jsr CheckNeighbor
     jmp SkipLeft
 @SkipRoomCheck:
-    ldx #$03
-@Loop:
-    lda $0200, x
-    sec
-    sbc #PlayerSpeed
-    sta $0200, x
-    clc
-    inx
-    inx
-    inx 
-    inx
-    cpx #$23
-    bne @Loop
-
-    lda GameStatus
-    and #%00000001
-    cmp #%00000001 ; is player facing left?
-    beq SkipFlipPlayerLeft
-    lda #$05
-    sta $020D
-    lda #$06
-    sta $0211
-    lda #%00000001
-    ora GameStatus
-    sta GameStatus
-
-SkipFlipPlayerLeft:
+    jsr MoveChopLeft
 SkipLeft:
 
 ; Right movement code
@@ -453,37 +408,13 @@ ChkRight:
     jsr CheckNeighbor
     jmp SkipRight
 @SkipRoomCheck:
-    ldx #$03
-@Loop:
-    lda $0200, x
-    clc
-    adc #PlayerSpeed
-    sta $0200, x
-    clc
-    inx
-    inx
-    inx 
-    inx
-    cpx #$23
-    bne @Loop
-
-    lda GameStatus
-    and #%00000001
-    cmp #%00000000 ; is player facing right?
-    beq SkipFlipPlayerRight
-    lda #$03
-    sta $020D
-    lda #$04
-    sta $0211
-    lda #%00000001
-    eor GameStatus
-    sta GameStatus
-
-SkipFlipPlayerRight:
+    jsr MoveChopRight
 SkipRight:
 
     lda #$30
-    jsr PullBanana
+    jsr BananaTick
+    ;lda #$48
+    ;jsr BlackHoleTick
     jsr CheckBeadCollect
 
 ; --------------- AUDIO TEST DEBUG ONLY -----------------
@@ -564,8 +495,8 @@ Palettes:
 
     ; Sprite palettes
     .byte $0F, $09, $39, $2A ; Green and black
+    .byte $0F, $09, $39, $2A ; stage palette
     .byte $0F, $38, $39, $0F ; Yellow and black
-    .byte $0F, $07, $17, $16
     .byte $0F, $0F, $0F, $0F
 
 PigSprite:

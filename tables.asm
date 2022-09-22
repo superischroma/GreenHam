@@ -11,3 +11,6 @@ InitialRoomTable:
 
 BGKeyframeSetTable:
     .word SSFBGKeyframes, SPFBGKeyframes, FHFBGKeyframes, MSFBGKeyframes, 0, 0, 0, 0
+
+TickTable:
+    .word BananaTick, BlackHoleTick
