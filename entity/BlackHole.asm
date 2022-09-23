@@ -1,5 +1,8 @@
-BlackHoleRange = 5 ; within 5 tiles of the black hole's proximity, the player will be pulled
+; Black Hole subroutines
+
+BlackHoleRange = 7 ; within 5 tiles of the black hole's proximity, the player will be pulled
 BlackHolePxRange = BlackHoleRange * 8
+BlackHoleDelay = $03
 
 ; pig sprite 4 x: $020F
 ; pig sprite 4 y: $020C
@@ -11,10 +14,14 @@ BlackHoleTick:
     sta TempPointer
     lda #$02
     sta TempPointer+1
-    ldy #$02
-    lda (TempPointer), y
-    cmp #$1A
-    bne @Skip
+    lda BlackHoleTimer
+    cmp #BlackHoleDelay
+    beq @Continue
+    inc BlackHoleTimer
+    rts
+@Continue:
+    lda #$00
+    sta BlackHoleTimer
     ldy #$03
     lda (TempPointer), y
     clc
@@ -25,19 +32,54 @@ BlackHoleTick:
     clc
     adc #$08
     sta TempValue+1
+    jsr ChkWithinBH
+    beq @Skip
+    lda TempValue
+    cmp $020F
+    bcc @MoveLeft
+    jsr MoveChopRight
+    jmp @Vertical
+@MoveLeft:
+    jsr MoveChopLeft
+@Vertical:
+    lda TempValue+1
+    cmp $020C
+    bcc @MoveUp
+    jsr MoveChopDown
+    rts
+@MoveUp:
+    jsr MoveChopUp
+@Skip:
+    rts
+
+; check if pig is within black hole
+; black hole x-pos in TempValue
+; black hole y-pos in TempValue+1
+ChkWithinBH:
+    ; black hole x-pos >= pig x-pos
+    ; black hole x-pos < pig x-pos
+    lda TempValue
+    sec
+    sbc #BlackHolePxRange ; left side boundary of black hole range
+    cmp $020F
+    bcs @Not
     lda TempValue
     clc
-    adc #40
+    adc #BlackHolePxRange
     cmp $020F
-    bcc @SkipMLeft
-    jsr MoveChopLeft
-@SkipMLeft:
-    lda TempValue
-    sec 
-    sbc #40
-    cmp $020F
-    bcs @SkipMRight
-    jsr MoveChopRight
-@SkipMRight:
-@Skip:
+    bcc @Not
+    lda TempValue+1
+    sec
+    sbc #BlackHolePxRange
+    cmp $020C
+    bcs @Not
+    lda TempValue+1
+    clc 
+    adc #BlackHolePxRange
+    cmp $020C
+    bcc @Not
+    lda #$01
+    rts
+@Not:
+    lda #$00
     rts

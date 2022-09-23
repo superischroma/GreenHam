@@ -1,3 +1,5 @@
+; Chop subroutines
+
 SetPlayerY:
     tya
     sta $0200
@@ -86,19 +88,6 @@ MoveChopLeft:
     inx
     cpx #$23
     bne @Loop
-
-    lda GameStatus
-    and #%00000001
-    cmp #%00000001 ; is player facing left?
-    beq @Skip
-    lda #$05
-    sta $020D
-    lda #$06
-    sta $0211
-    lda #%00000001
-    ora GameStatus
-    sta GameStatus
-@Skip:
     rts
 
 MoveChopRight:
@@ -115,11 +104,26 @@ MoveChopRight:
     inx
     cpx #$23
     bne @Loop
+    rts
 
+FaceChopLeft:
     lda GameStatus
     and #%00000001
-    cmp #%00000000 ; is player facing right?
-    beq @Skip
+    bne @Skip ; is player facing left? if so, branch
+    lda #$05
+    sta $020D
+    lda #$06
+    sta $0211
+    lda #%00000001
+    ora GameStatus
+    sta GameStatus
+@Skip:
+    rts
+
+FaceChopRight:
+    lda GameStatus
+    and #%00000001
+    beq @Skip ; is player facing right? if so, branch
     lda #$03
     sta $020D
     lda #$04

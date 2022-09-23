@@ -87,6 +87,15 @@ TitleCardTimer:
 BananaPullTimer:
     .byte $00
 
+BlackHoleTimer:
+    .byte $00
+
+SpeedsterTimer:
+    .byte $00
+
+SpeedsterDestination:
+    .byte $00, $00
+
 .if Debug = 1
 AudioTest: ; Running temporary audio tests
     .byte $00, $00
@@ -113,6 +122,7 @@ OverflowCounter: ; counting overflows for loops which exceed 256 iterations
     .include "entity/Banana.asm"
     .include "entity/BlackHole.asm"
     .include "entity/Bead.asm"
+    .include "entity/Speedster.asm"
 
 WaitForVBlank:
     bit PPUSTATUS
@@ -377,6 +387,7 @@ ChkLeft:
     jmp SkipLeft
 @SkipRoomCheck:
     jsr MoveChopLeft
+    jsr FaceChopLeft
 SkipLeft:
 
 ; Right movement code
@@ -409,12 +420,15 @@ ChkRight:
     jmp SkipRight
 @SkipRoomCheck:
     jsr MoveChopRight
+    jsr FaceChopRight
 SkipRight:
 
     lda #$30
     jsr BananaTick
-    ;lda #$48
-    ;jsr BlackHoleTick
+    lda #$48
+    jsr BlackHoleTick
+    lda #$58
+    jsr SpeedsterTick
     jsr CheckBeadCollect
 
 ; --------------- AUDIO TEST DEBUG ONLY -----------------

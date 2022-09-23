@@ -1,4 +1,9 @@
-BananaPullDelay = $01
+; Banana subroutines
+
+BananaPullDelay = $02
+
+BananaPalette:
+    .byte $0F, $38, $39, $0F
 
 ; a - offset
 BananaTick:
