@@ -9,5 +9,5 @@ PPUADDR = $2006
 PPUDATA = $2007
 OAMDMA = $4014
 ; Constant game settings
-Debug = 0
+Debug = 1
 PlayerSpeed = $01
