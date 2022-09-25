@@ -1,4 +1,4 @@
-; Speedster subroutines
+; Speedster (06) data and subroutines
 SpeedsterDelay = $A0
 SpeedsterVSpeed = $01
 SpeedsterHSpeed = $04

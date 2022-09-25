@@ -63,6 +63,9 @@ BeadStates:
 TempPointer:
     .byte $00, $00
 
+IndirectJmpPointer:
+    .byte $00, $00
+
 CurrentBGKeyframeSet:
     .word 0
 
@@ -96,10 +99,27 @@ SpeedsterTimer:
 SpeedsterDestination:
     .byte $00, $00
 
-.if Debug = 1
-AudioTest: ; Running temporary audio tests
+RainingObjTrigger:
     .byte $00, $00
-.endif
+
+AudioTest: ; toggle state, lo value
+    .byte $00, $00
+
+ActiveEntities: ; 8 slots for entities besides chop and bead
+    .byte $00, $00, $00, $00, $00, $00, $00, $00
+
+EntityData: ; 16 bytes for entity data (2 for each active entity)
+    .byte $00, $00, $00, $00, $00, $00, $00, $00
+    .byte $00, $00, $00, $00, $00, $00, $00, $00
+
+SpritePointer:
+    .byte $00
+
+EntityCount:
+    .byte $00
+
+ExtraPalettes:
+    .byte $00
 
 OverflowCounter: ; counting overflows for loops which exceed 256 iterations
     .byte 0
@@ -117,12 +137,17 @@ OverflowCounter: ; counting overflows for loops which exceed 256 iterations
 
     .include "loader.asm"
     .include "player.asm"
+    .include "entities.asm"
 
     .include "entity/Chop.asm"
     .include "entity/Banana.asm"
     .include "entity/BlackHole.asm"
     .include "entity/Bead.asm"
     .include "entity/Speedster.asm"
+    .include "entity/SuperCheese.asm"
+
+CallPtrSubroutine:
+    jmp (IndirectJmpPointer)
 
 WaitForVBlank:
     bit PPUSTATUS
@@ -162,8 +187,10 @@ ClearMemory:
     ; data initialization section
 
     lda #$03
-    ldx #$01
-    sta PlayerLives, x ; set lives to 3
+    sta PlayerLives+1 ; set lives to 3
+
+    lda #$30
+    sta SpritePointer ; points to after pig and bead
 
 LoadPalettes:
     lda PPUSTATUS
@@ -331,6 +358,7 @@ ChkUp:
     lda Buttons
     and #%00001000
     beq SkipUp
+    inc AudioTest+1
     lda $0200
     cmp #$07
     bcs @SkipRoomCheck
@@ -346,6 +374,7 @@ SkipUp:
     lda Buttons
     and #%00000100
     beq SkipDown
+    dec AudioTest+1
     lda $0200
     cmp #$CC
     bcc @SkipRoomCheck
@@ -356,6 +385,17 @@ SkipUp:
 @SkipRoomCheck:
     jsr MoveChopDown
 SkipDown:
+
+ChkSelect:
+    lda Buttons
+    and #%00100000
+    beq SkipSelect
+    lda #%00000001
+    eor AudioTest
+    sta AudioTest
+    lda #%10000000  ;Triangle channel on
+    sta TRI_ENV
+SkipSelect:
 
 ; Left movement code
 ChkLeft:
@@ -423,40 +463,19 @@ ChkRight:
     jsr FaceChopRight
 SkipRight:
 
-    lda #$30
-    jsr BananaTick
-    lda #$48
-    jsr BlackHoleTick
-    lda #$58
-    jsr SpeedsterTick
     jsr CheckBeadCollect
 
-; --------------- AUDIO TEST DEBUG ONLY -----------------
+; --------------- AUDIO TEST ----------------------------
 
-.if Debug = 1
-DebugRepeatTone:
     lda AudioTest
-    cmp #$1A
-    bne @SkipSwitch
-    lda #$FF
-    sta AudioTest
+    beq SkipAudioTest
+    lda #%10000001  ;Triangle channel on
+    sta TRI_ENV
     lda AudioTest+1
-    eor #%00000001
-    sta AudioTest+1
-@SkipSwitch:
-    inc AudioTest
-
-    lda AudioTest+1
-    beq @SkipPlay
-    lda #$E0    ;0C9 is a C# in NTSC mode
-    sta $4002
-    lda #$00
-    sta $4003
-    lda AudioTest+1
-    eor #%00000001
-    sta AudioTest+1
-@SkipPlay:
-.endif
+    sta TRI_LO
+    lda #%00000000
+    sta TRI_HI
+SkipAudioTest:
 
 ; -------------------------------------------------------
 

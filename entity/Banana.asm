@@ -1,4 +1,4 @@
-; Banana subroutines
+; Banana (03) data and subroutines
 
 BananaPullDelay = $02
 

@@ -187,21 +187,38 @@ LoadRoom:
     sbc TempValue
     tay
     cpx #$00
-    bne @SkipLayerCheck
+    beq @ContLayerCheck
+    jmp @SkipLayerCheck
+@ContLayerCheck:
     pla
     inc TempValue
     lda TempValue
     cmp #$04
     bne @Loop
     ldy #45
-    ldx #$00
 @EnemyLoop:
     lda (PlayerRoom), y
     cmp #$FF
     beq @AfterEnemyLoop
-    sta $0230, x
-    inx
+    ldx EntityCount
+    sta ActiveEntities, x
+    inc EntityCount
+    pha
     iny
+    lda (PlayerRoom), y
+    sta TempValue
+    iny
+    lda (PlayerRoom), y
+    sta TempValue+1 
+    iny
+    pla
+    asl a
+    tax
+    lda SpawnTable, x
+    sta IndirectJmpPointer
+    lda SpawnTable+1, x
+    sta IndirectJmpPointer+1
+    jsr CallPtrSubroutine
     jmp @EnemyLoop
 @AfterEnemyLoop:
     ldy #44

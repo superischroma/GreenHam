@@ -1,4 +1,4 @@
-; Chop subroutines
+; Chop (00) data and subroutines
 
 SetPlayerY:
     tya
@@ -43,6 +43,8 @@ SetPlayerX:
     rts
 
 MoveChopUp:
+    jsr ChkInGame
+    beq @End
     ldx #$00
 @Loop:
     lda $0200, x
@@ -56,9 +58,12 @@ MoveChopUp:
     inx
     cpx #$20
     bne @Loop
+@End:
     rts
 
 MoveChopDown:
+    jsr ChkInGame
+    beq @End
     ldx #$00
 @Loop:
     lda $0200, x
@@ -72,9 +77,12 @@ MoveChopDown:
     inx
     cpx #$20
     bne @Loop
+@End:
     rts
 
 MoveChopLeft:
+    jsr ChkInGame
+    beq @End
     ldx #$03
 @Loop:
     lda $0200, x
@@ -88,9 +96,12 @@ MoveChopLeft:
     inx
     cpx #$23
     bne @Loop
+@End:
     rts
 
 MoveChopRight:
+    jsr ChkInGame
+    beq @End
     ldx #$03
 @Loop:
     lda $0200, x
@@ -104,6 +115,7 @@ MoveChopRight:
     inx
     cpx #$23
     bne @Loop
+@End:
     rts
 
 FaceChopLeft:
@@ -132,4 +144,16 @@ FaceChopRight:
     eor GameStatus
     sta GameStatus
 @Skip:
+    rts
+
+ChkInGame:
+    lda PlayerStage
+    cmp #$01
+    bcc @Not
+    cmp #$09
+    bcs @Not
+    lda #$01
+    rts
+@Not:
+    lda #$00
     rts

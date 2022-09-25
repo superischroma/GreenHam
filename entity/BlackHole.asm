@@ -1,4 +1,4 @@
-; Black Hole subroutines
+; Black Hole (05) data and subroutines
 
 BlackHoleRange = 7 ; within 5 tiles of the black hole's proximity, the player will be pulled
 BlackHolePxRange = BlackHoleRange * 8

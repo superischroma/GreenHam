@@ -1,4 +1,4 @@
-; Bead subroutines
+; Bead (01) data and subroutines
 
 UnloadCurrentBead:
     ldx #$20
