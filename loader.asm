@@ -218,7 +218,11 @@ LoadRoom:
     sta IndirectJmpPointer
     lda SpawnTable+1, x
     sta IndirectJmpPointer+1
+    tya
+    pha
     jsr CallPtrSubroutine
+    pla
+    tay
     jmp @EnemyLoop
 @AfterEnemyLoop:
     ldy #44
