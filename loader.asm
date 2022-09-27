@@ -578,7 +578,6 @@ RenderRow:
     lda TempValue+1
     pha
     sty TempValue+1
-    inc $00FE
     lda #$00
     sta TempPointer
     lda #$02
