@@ -5,6 +5,35 @@ BananaPullDelay = $02
 BananaPalette:
     .byte $0F, $38, $39, $0F
 
+SpawnBanana:
+    lda BananaPalette
+    sta TempPointer
+    lda BananaPalette+1
+    sta TempPointer+1
+    jsr AddPalette
+    sta TempValue+2
+    ldx #$02
+    ldy #$0E
+    jsr RenderRow
+    lda TempValue+1
+    clc
+    adc #$08
+    sta TempValue+1
+    ldx #$02
+    ldy #$10
+    jsr RenderRow
+    clc
+    adc #$08
+    sta TempValue+1
+    ldx #$02
+    ldy #$12
+    jsr RenderRow
+    lda TempIndex+1
+    clc
+    adc #$18
+    sta TempIndex+1
+    rts
+
 ; a - offset
 BananaTick:
     ldx BananaPullTimer

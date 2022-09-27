@@ -6,6 +6,18 @@ SpeedsterHSpeed = $04
 ; pig sprite 4 x: $020F
 ; pig sprite 4 y: $020C
 
+SpawnSpeedster:
+    ldx #$01
+    ldy #$1B
+    lda #$01
+    sta TempValue+2
+    jsr RenderRow
+    lda TempIndex+1
+    clc
+    adc #$04
+    sta TempIndex+1
+    rts
+
 ; a - offset
 SpeedsterTick:
     sta TempPointer

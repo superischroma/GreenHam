@@ -57,3 +57,28 @@ MoveSpriteGroup:
 @Down:
     inc $0200, x 
     jmp @Loop
+
+AddPalette:
+    lda PPUSTATUS
+    lda #$3F
+    sta PPUADDR
+    lda PalettePointer
+    sta PPUADDR
+    ldy #$00
+@Loop:
+    lda (TempPointer), y
+    sta PPUDATA
+    inc PalettePointer
+    iny
+    cpy #$04
+    bne @Loop
+    lda PalettePointer
+    sec
+    sbc #$10
+    clc
+    lsr a
+    clc
+    lsr a
+    sec
+    sbc #$01
+    rts

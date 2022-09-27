@@ -16,4 +16,4 @@ TickTable:
     .word 0, 0, 0, BananaTick, 0, BlackHoleTick, SpeedsterTick
 
 SpawnTable:
-    .word 0, 0, SpawnSuperCheese
+    .word 0, 0, SpawnSuperCheese, SpawnBanana, 0, 0, SpawnSpeedster

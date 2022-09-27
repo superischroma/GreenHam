@@ -79,7 +79,7 @@ TempValue:
     .byte $00, $00, $00
 
 TempIndex:
-    .byte $00
+    .byte $00, $00
 
 SelectedOption:
     .byte $00
@@ -121,7 +121,7 @@ SpritePointer:
 EntityCount:
     .byte $00
 
-ExtraPalettes:
+PalettePointer:
     .byte $00
 
 OverflowCounter: ; counting overflows for loops which exceed 256 iterations
@@ -194,6 +194,9 @@ ClearMemory:
 
     lda #$30
     sta SpritePointer ; points to after pig and bead
+
+    lda #$18
+    sta PalettePointer
 
 LoadPalettes:
     lda PPUSTATUS
@@ -468,6 +471,28 @@ SkipRight:
 
     jsr CheckBeadCollect
 
+    ldx #$00
+    stx TempIndex
+    ldy #$30
+    sty TempIndex+1
+TickLoop:
+    ldx TempIndex
+    lda ActiveEntities, x ; current entity id
+    beq @Skip
+    asl a
+    tax
+    lda TickTable, x
+    sta IndirectJmpPointer
+    lda TickTable+1, x
+    sta IndirectJmpPointer+1
+    lda TempIndex+1
+    jsr CallPtrSubroutine
+    inc TempIndex
+    ldx TempIndex
+    cpx #$08
+    bne TickLoop
+@Skip:
+
 ; --------------- AUDIO TEST ----------------------------
 
     lda AudioTest
@@ -532,7 +557,7 @@ Palettes:
     ; Sprite palettes
     .byte $0F, $09, $39, $2A ; Green and black
     .byte $0F, $09, $39, $2A ; stage palette
-    .byte $0F, $38, $39, $0F ; Yellow and black
+    .byte $0F, $0F, $0F, $0F ; Yellow and black
     .byte $0F, $0F, $0F, $0F
 
 PigSprite:
