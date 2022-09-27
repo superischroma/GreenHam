@@ -78,6 +78,9 @@ BGKeyframeCounter:
 TempValue:
     .byte $00, $00, $00
 
+TempIndex:
+    .byte $00
+
 SelectedOption:
     .byte $00
 

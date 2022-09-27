@@ -2,40 +2,18 @@
 
 ; x and y of sprite in index registers
 SpawnSuperCheese:
+    ldx #$02
+    ldy #$24
     lda #$00
-    sta TempPointer
-    lda #$02
-    sta TempPointer+1
-    ldx #$24
-    ldy SpritePointer
-@Loop:
+    sta TempValue+2
+    jsr RenderRow
     lda TempValue+1
-    cpx #$26
-    bcc @SkipYOffset
     clc
     adc #$08
-@SkipYOffset:
-    sta (TempPointer), y
-    iny
-    txa
-    sta (TempPointer), y
-    iny
-    lda #%00000000
-    sta (TempPointer), y
-    iny
-    txa
-    and #%00000001
-    beq @SkipXOffset ; is tile odd? if not, branch
+    sta TempValue+1
+    ldx #$02
+    ldy #$26
     lda #$00
-    clc
-    adc #$08
-@SkipXOffset:
-    clc
-    adc TempValue
-    sta (TempPointer), y
-    iny
-    inx
-    cpx #$28
-    bne @Loop
-    sty SpritePointer
+    sta TempValue+2
+    jsr RenderRow
     rts

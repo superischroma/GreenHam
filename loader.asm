@@ -481,21 +481,17 @@ LoadStage:
     sta CurrentBGKeyframeSet+1
     lda TempValue
     jsr SetStageValue
-    txa
-    pha
+    stx TempValue+1
     jsr ClearBackground
-    pla
-    tax 
+    ldx TempValue+1
     lda LevelPaletteTable, x
     sta TempPointer
     lda LevelPaletteTable+1, x
     sta TempPointer+1
-    txa
-    pha
+    stx TempValue+1
     jsr LoadLevelPalette
     jsr EnableScreen
-    pla
-    tax 
+    ldx TempValue+1
     lda TitleCardTable, x
     sta TempPointer
     lda TitleCardTable+1, x
@@ -564,4 +560,50 @@ LoadPauseScreen:
 EnableAudio:
     lda #$0F
     sta $4015
+    rts
+
+; index x - count
+; index y - tile
+; x-pos, y-pos, and attr in TempValue
+; x and y on stack
+RenderRow:
+    lda TempValue+1
+    pha
+    lda TempValue
+    pha
+    lda TempValue+1
+    pha
+    sty TempValue+1
+    inc $00FE
+    lda #$00
+    sta TempPointer
+    lda #$02
+    sta TempPointer+1
+    ldy SpritePointer
+@Loop:
+    pla
+    sta (TempPointer), y
+    pha
+    iny
+    lda TempValue+1
+    sta (TempPointer), y
+    inc TempValue+1
+    iny
+    lda TempValue+2
+    sta (TempPointer), y
+    iny
+    lda TempValue
+    sta (TempPointer), y
+    clc
+    adc #$08
+    sta TempValue
+    iny
+    dex
+    bne @Loop
+    sty SpritePointer
+    pla
+    pla
+    sta TempValue
+    pla
+    sta TempValue+1
     rts

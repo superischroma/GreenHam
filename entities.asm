@@ -57,12 +57,3 @@ MoveSpriteGroup:
 @Down:
     inc $0200, x 
     jmp @Loop
-
-
-; entity id in accumulator
-; x and y in TempValue
-;SpawnEntity:
-;    sta TempValue+2
-;    tax
-;    lda EntityInitSpriteTable, x
-;    rts
