@@ -31,6 +31,7 @@ LoadInformationBar:
 
     jsr LoadLives
     jsr LoadBeads
+    jsr LoadNeedleStatus
     rts
 
 LoadLives:
@@ -65,6 +66,24 @@ LoadBeads:
     inx
     cpx #$02
     bne @BeadsLoop
+    rts
+
+LoadNeedleStatus:
+    lda PPUSTATUS
+    lda #$20
+    sta PPUADDR
+    lda #$42
+    sta PPUADDR
+    lda GameStatus
+    and #%00000100
+    cmp #$00
+    beq @Off
+    lda #$68
+    sta PPUDATA
+    rts
+@Off:
+    lda #$24
+    sta PPUDATA
     rts
 
 LoadTitleScreen:
@@ -609,4 +628,14 @@ RenderRow:
     sta TempValue
     pla
     sta TempValue+1
+    rts
+
+UnloadSprite:
+    ldx TempPointer
+    lda #$FE
+@Loop:
+    sta $0200, x
+    inx
+    dey
+    bne @Loop
     rts

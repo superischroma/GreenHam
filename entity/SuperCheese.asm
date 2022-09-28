@@ -16,8 +16,4 @@ SpawnSuperCheese:
     lda #$00
     sta TempValue+2
     jsr RenderRow
-    lda TempIndex+1
-    clc
-    adc #$10
-    sta TempIndex+1
     rts

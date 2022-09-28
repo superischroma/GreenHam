@@ -84,3 +84,9 @@ AddPalette:
     sec
     sbc #$01
     rts
+
+IsEntityDead:
+    ldy #$01
+    lda (TempPointer), y
+    cmp #$FE
+    rts

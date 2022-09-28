@@ -37,9 +37,10 @@ PlayerStage:
 PlayerFacing:
     .byte $00
 
-;             --- paused (0 - no, 1 - yes)
-;             | -- player facing direction (0 - right, 1 - left)
-;             | |
+;           ---- needle status
+;           | --- paused (0 - no, 1 - yes)
+;           | | -- player facing direction (0 - right, 1 - left)
+;           | | |
 ; 0 0 0 0 0 0 0 0
 GameStatus:
     .byte %00000000
@@ -109,10 +110,6 @@ AudioTest: ; toggle state, lo value
     .byte $00, $00
 
 ActiveEntities: ; 8 slots for entities besides chop and bead
-    .byte $00, $00, $00, $00, $00, $00, $00, $00
-
-EntityData: ; 16 bytes for entity data (2 for each active entity)
-    .byte $00, $00, $00, $00, $00, $00, $00, $00
     .byte $00, $00, $00, $00, $00, $00, $00, $00
 
 SpritePointer:
@@ -477,22 +474,30 @@ SkipRight:
     ldy #$30
     sty TempIndex+1
 TickLoop:
-    ldx TempIndex
+    lda TempIndex
+    pha
+    tax
     lda ActiveEntities, x ; current entity id
-    beq @Skip
+    beq @Restore
     asl a
     tax
     lda TickTable, x
+    beq @Restore
     sta IndirectJmpPointer
     lda TickTable+1, x
     sta IndirectJmpPointer+1
+    pla
+    tax
     lda TempIndex+1
     jsr CallPtrSubroutine
     inc TempIndex
     ldx TempIndex
     cpx #$08
     bne TickLoop
-@Skip:
+    jmp @Finish
+@Restore:
+    pla
+@Finish:
 
 ; --------------- AUDIO TEST ----------------------------
 

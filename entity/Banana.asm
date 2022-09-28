@@ -28,10 +28,6 @@ SpawnBanana:
     ldx #$02
     ldy #$12
     jsr RenderRow
-    lda TempIndex+1
-    clc
-    adc #$18
-    sta TempIndex+1
     rts
 
 ; a - offset
@@ -40,6 +36,10 @@ BananaTick:
     cpx #BananaPullDelay
     beq @DoneDelayCheck
     inc BananaPullTimer
+    lda TempIndex+1
+    clc
+    adc #$18
+    sta TempIndex+1
     rts
 
 @DoneDelayCheck:
@@ -89,6 +89,10 @@ BananaTick:
 @DoneDownCheck:
     lda #$00
     sta BananaPullTimer
+    lda TempIndex+1
+    clc
+    adc #$18
+    sta TempIndex+1
     rts
 
 ; a: attribute update; x: 0 - add, 1 - subtract

@@ -12,10 +12,6 @@ SpawnSpeedster:
     lda #$01
     sta TempValue+2
     jsr RenderRow
-    lda TempIndex+1
-    clc
-    adc #$04
-    sta TempIndex+1
     rts
 
 ; a - offset
@@ -29,7 +25,7 @@ SpeedsterTick:
     cmp #SpeedsterDelay
     beq @Start
     inc SpeedsterTimer
-    rts
+    jmp @End
 @Start:
     lda $020F
     sta SpeedsterDestination
@@ -58,12 +54,12 @@ SpeedsterTick:
     sec
     sbc #SpeedsterVSpeed
     sta (TempPointer), y
-    rts
+    jmp @End
 @MoveDown:
     clc
     adc #SpeedsterVSpeed
     sta (TempPointer), y
-    rts
+    jmp @End
 @MoveHorizontal:
     ldy #$03
     lda (TempPointer), y
@@ -84,7 +80,7 @@ SpeedsterTick:
     cmp SpeedsterDestination
     bcc @Restore
     beq @Restore
-    rts
+    jmp @End
 @MoveRight:
     pha
     ldy #$01
@@ -100,10 +96,15 @@ SpeedsterTick:
     sta (TempPointer), y
     cmp SpeedsterDestination
     bcs @Restore
-    rts
+    jmp @End
 @Restore:
     lda #$00
     sta SpeedsterDestination
     sta SpeedsterDestination+1
     sta SpeedsterTimer
+@End:
+    lda TempIndex+1
+    clc
+    adc #$04
+    sta TempIndex+1
     rts
