@@ -148,6 +148,7 @@ OverflowCounter: ; counting overflows for loops which exceed 256 iterations
     .include "entity/Bead.asm"
     .include "entity/Speedster.asm"
     .include "entity/SuperCheese.asm"
+    .include "entity/Needle.asm"
 
 CallPtrSubroutine:
     jmp (IndirectJmpPointer)

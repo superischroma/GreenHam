@@ -13,7 +13,7 @@ BGKeyframeSetTable:
     .word SSFBGKeyframes, SPFBGKeyframes, FHFBGKeyframes, MSFBGKeyframes, 0, 0, 0, 0
 
 TickTable:
-    .word 0, 0, 0, BananaTick, 0, BlackHoleTick, SpeedsterTick
+    .word 0, 0, 0, BananaTick, 0, BlackHoleTick, SpeedsterTick, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 
 SpawnTable:
-    .word 0, 0, SpawnSuperCheese, SpawnBanana, 0, 0, SpawnSpeedster
+    .word 0, 0, SpawnSuperCheese, SpawnBanana, 0, 0, SpawnSpeedster, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, SpawnNeedle, 0

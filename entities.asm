@@ -21,6 +21,8 @@
 ; 13 - Chomper
 ; 14 - Bubble Generator
 ; 15 - Whirlpool
+; 16 - Needle
+; 17 - Sewing Kit
 
 ; y - count
 ; x - offset
