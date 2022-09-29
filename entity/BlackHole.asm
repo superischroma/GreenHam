@@ -9,6 +9,27 @@ BlackHoleDelay = $03
 
 ; black hole x + 40 <= pig x
 
+SpawnBlackHole:
+    ldy #$1A
+
+; y - tile
+SpawnBlackHoleLike:
+    tya
+    pha
+    lda #$01
+    sta TempValue+2
+    jsr RenderCircularRow
+    lda TempValue+1
+    clc
+    adc #$08
+    sta TempValue+1
+    pla
+    tay
+    lda #%10000001
+    sta TempValue+2
+    jsr RenderCircularRow
+    rts
+
 ; a - offset
 BlackHoleTick:
     sta TempPointer

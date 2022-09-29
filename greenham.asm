@@ -141,6 +141,7 @@ OverflowCounter: ; counting overflows for loops which exceed 256 iterations
 
     .include "entity/Chop.asm"
     .include "entity/Banana.asm"
+    .include "entity/Quicksand.asm"
     .include "entity/BlackHole.asm"
     .include "entity/Bead.asm"
     .include "entity/Speedster.asm"

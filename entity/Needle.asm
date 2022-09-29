@@ -28,12 +28,10 @@ NeedleTick:
     ldy #$00
     lda (TempPointer), y
     sec
-    sbc #$04
+    sbc #$08
     cmp $020C
     bcs @End
     lda (TempPointer), y
-    clc
-    adc #$0C
     cmp $020C
     bcc @End
     ldy #$08

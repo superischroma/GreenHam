@@ -179,7 +179,12 @@ LoadLevelPalette:
     rts
 
 LoadRoom:
+    lda #$30
+    sta SpritePointer
+    lda #$18
+    sta PalettePointer
     ldy #$00
+    sty EntityCount
     lda (PlayerRoom), y
     sta TempPointer
     iny
@@ -588,7 +593,6 @@ EnableAudio:
 ; index x - count
 ; index y - tile
 ; x-pos, y-pos, and attr in TempValue
-; x and y on stack
 RenderRow:
     lda TempValue+1
     pha
@@ -623,6 +627,56 @@ RenderRow:
     dex
     bne @Loop
     sty SpritePointer
+    pla
+    pla
+    sta TempValue
+    pla
+    sta TempValue+1
+    rts
+
+; index y - tile
+; x-pos, y-pos, and attr in TempValue
+RenderCircularRow:
+    ldx #$02
+    lda TempValue+1
+    pha
+    lda TempValue
+    pha
+    lda TempValue+1
+    pha
+    sty TempValue+1
+    lda #$00
+    sta TempPointer
+    lda #$02
+    sta TempPointer+1
+    ldy SpritePointer
+@Loop:
+    pla
+    sta (TempPointer), y
+    pha
+    iny
+    lda TempValue+1
+    sta (TempPointer), y
+    iny
+    lda TempValue+2
+    cpx #$01
+    bne @SkipFlip
+    ora #%01000000
+@SkipFlip:
+    sta (TempPointer), y
+    iny
+    lda TempValue
+    sta (TempPointer), y
+    clc
+    adc #$08
+    sta TempValue
+    iny
+    dex
+    bne @Loop
+    sty SpritePointer
+    lda TempValue+2
+    eor #%01000000
+    sta TempValue+2
     pla
     pla
     sta TempValue

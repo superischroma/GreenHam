@@ -3,12 +3,12 @@
 BananaPullDelay = $02
 
 BananaPalette:
-    .byte $0F, $38, $39, $0F
+    .byte $0F, $38, $36, $0F
 
 SpawnBanana:
-    lda BananaPalette
+    lda #<BananaPalette
     sta TempPointer
-    lda BananaPalette+1
+    lda #>BananaPalette
     sta TempPointer+1
     jsr AddPalette
     sta TempValue+2

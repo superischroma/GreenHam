@@ -32,4 +32,6 @@ SPFRoomA:
 
     .byte $00, $00, %00000000
 
+    .byte $0A, $70, $70
+
     .byte $FF

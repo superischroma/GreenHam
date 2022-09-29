@@ -13,9 +13,7 @@ UnloadCurrentBead:
 CheckBeadCollect:
     lda $0220
     cmp #$FE
-    bne @Continue
-    rts
-@Continue:
+    beq @End
     lda $020F
     cmp $0223
     bcc @End

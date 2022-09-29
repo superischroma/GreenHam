@@ -34,6 +34,7 @@ SSFRoomA:
 
     .byte $03, $70, $70
     .byte $16, $80, $80
+    .byte $05, $90, $90
 
     .byte $FF
 
