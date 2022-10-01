@@ -18,14 +18,14 @@ PlayerBeads:
 
 ; Current stage of the player
 ; 00 - Title screen
-; 01 - Starry Sights Field
+; 01 - Fluttering Heights Field
 ; 02 - Sandy Pyramid Field
-; 03 - Fluttering Heights Field
-; 04 - Magical Spell Field
-; 05 - Aquatic Depths Field
-; 06 - Unnamed field
-; 07 - Unnamed field
-; 08 - Unnamed field
+; 03 - Magical Spell Field
+; 04 - Aquatic Depths Field
+; 05 - Starry Sights Field
+; 06 - Flashing Casino Field
+; 07 - Planetary Debris Field
+; 08 - Flowing Fire Field
 ; 09 - Options
 ; 0A - Field Select
 PlayerStage:

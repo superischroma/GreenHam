@@ -359,9 +359,9 @@ RunTitleCard: ; start title card timer
     rts
 
 TitleCardEvent: ; title card frame tick
-    .if Debug = $01
+    .if Debug = 1
     jmp @Exit
-    .endif
+    .else
     lda TitleCardTimer
     cmp #$30
     beq @Next
@@ -424,6 +424,7 @@ TitleCardEvent: ; title card frame tick
 @Wait:
     inc TempValue
     rts
+    .endif
 @Exit:
     lda #$00
     sta TitleCardTimer

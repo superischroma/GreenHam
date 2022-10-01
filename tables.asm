@@ -1,16 +1,16 @@
 ; Lookup tables for levels
 
 TitleCardTable:
-    .word SSFTitleCard, SPFTitleCard, FHFTitleCard, MSFTitleCard, 0, 0, 0, 0
+    .word FHFTitleCard, SPFTitleCard, MSFTitleCard, 0, SSFTitleCard, 0, 0, 0
 
 LevelPaletteTable:
-    .word SSFPalette, SPFPalette, FHFPalette, MSFPalette, ADFPalette, 0, 0, 0
+    .word FHFPalette, SPFPalette, MSFPalette, ADFPalette, SSFPalette, 0, 0, 0
 
 InitialRoomTable:
-    .word SSFRoomA, SPFRoomA, FHFRoomA, MSFRoomA, 0, 0, 0, 0
+    .word FHFRoomA, SPFRoomA, MSFRoomA, 0, SSFRoomA, 0, 0, 0
 
 BGKeyframeSetTable:
-    .word SSFBGKeyframes, SPFBGKeyframes, FHFBGKeyframes, MSFBGKeyframes, 0, 0, 0, 0
+    .word FHFBGKeyframes, SPFBGKeyframes, MSFBGKeyframes, 0, SSFBGKeyframes, 0, 0, 0
 
 TickTable:
     .word 0, 0, 0, BananaTick, 0, BlackHoleTick, SpeedsterTick, 0, 0, 0, BlackHoleTick, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, NeedleTick, 0
