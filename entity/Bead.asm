@@ -11,19 +11,12 @@ UnloadCurrentBead:
     rts
 
 CheckBeadCollect:
-    lda $0220
-    cmp #$FE
-    beq @End
-    lda $020F
-    cmp $0223
-    bcc @End
-    cmp $0227
-    bcs @End
-    lda $020C
-    cmp $0228
-    bcs @End
-    cmp $0220
-    bcc @End
+    lda #$20
+    sta TempPointer
+    lda #$02
+    sta TempPointer+1
+    jsr ChkCollison2x2
+    beq @End ; is player colliding with bead? if not, branch
     jsr IncrementBeads
     jsr UnloadCurrentBead
     lda BeadStates

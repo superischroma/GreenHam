@@ -115,3 +115,35 @@ IsEntityDead:
     lda (TempPointer), y
     cmp #$FE
     rts
+
+ChkCollison2x2:
+    lda #$10
+    sta TempValue
+    sta TempValue+1
+
+; pig sprite 4 x: $020F
+; pig sprite 4 y: $020C
+
+; dist x and y in temp value
+ChkCollison:
+    ldy #$03
+    lda (TempPointer), y
+    cmp $020F
+    bcs @Not
+    clc
+    adc TempValue
+    cmp $020F
+    bcc @Not
+    ldy #$00
+    lda (TempPointer), y
+    cmp $020C
+    bcs @Not
+    clc
+    adc TempValue+1
+    cmp $020C
+    bcc @Not
+    lda #$01
+    rts
+@Not:
+    lda #$00
+    rts

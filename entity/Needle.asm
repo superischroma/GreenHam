@@ -6,34 +6,18 @@ SpawnNeedle:
     jsr RenderRow
     rts
 
-; pig sprite 4 x: $020F
-; pig sprite 4 y: $020C
-
 NeedleTick:
     sta TempPointer
     lda #$02
     sta TempPointer+1
     jsr IsEntityDead
     beq @End ; is needle already collected? if so, branch
-    ldy #$03
-    lda (TempPointer), y
-    cmp $020F
-    bcs @End
-    ldy #$07
-    lda (TempPointer), y
-    clc
-    adc #$08
-    cmp $020F
-    bcc @End
-    ldy #$00
-    lda (TempPointer), y
-    sec
-    sbc #$08
-    cmp $020C
-    bcs @End
-    lda (TempPointer), y
-    cmp $020C
-    bcc @End
+    lda #$08
+    sta TempValue
+    lda #$10
+    sta TempValue+1
+    jsr ChkCollison
+    beq @End ; is the player colliding with the needle? if not, branch
     ldy #$08
     jsr UnloadSprite
     lda GameStatus

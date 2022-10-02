@@ -112,6 +112,10 @@ AudioTest: ; toggle state, lo value
 ActiveEntities: ; 8 slots for entities besides chop and bead
     .byte $00, $00, $00, $00, $00, $00, $00, $00
 
+EntityData: ; 16 bytes of long-term data for entities
+    .byte $00, $00, $00, $00, $00, $00, $00, $00
+    .byte $00, $00, $00, $00, $00, $00, $00, $00
+
 SpritePointer:
     .byte $00
 
