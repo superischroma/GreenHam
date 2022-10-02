@@ -614,7 +614,10 @@ RenderRow:
     iny
     lda TempValue+1
     sta (TempPointer), y
+    cmp #$FE
+    beq @SkipInc ; skip increment if the tile is blank (0xFE)
     inc TempValue+1
+@SkipInc:
     iny
     lda TempValue+2
     sta (TempPointer), y

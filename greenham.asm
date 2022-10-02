@@ -147,6 +147,7 @@ OverflowCounter: ; counting overflows for loops which exceed 256 iterations
     .include "entity/Speedster.asm"
     .include "entity/SuperCheese.asm"
     .include "entity/Needle.asm"
+    .include "entity/RainingObject.asm"
 
 CallPtrSubroutine:
     jmp (IndirectJmpPointer)
@@ -242,7 +243,7 @@ NMI:
 LatchController:
     lda AbsoluteButtons
     ldx PlayerStage
-    cpx #$0A
+    cpx #FieldSelect_ID
     beq @AllDisabled
     and #%11110000
     jmp @DoneDisabled
@@ -299,7 +300,7 @@ ChkStart:
     and #%00010000
     beq SkipStart
     ldx PlayerStage
-    cpx #$0A
+    cpx #FieldSelect_ID
     beq @FieldSelectScreen
     cpx #$00
     bne @PauseOption
@@ -322,7 +323,7 @@ ChkStart:
     lda #$01
     sta OptionValue
     jsr DisableScreen
-    lda #$0A
+    lda #FieldSelect_ID
     jsr SetStageValue
     jsr ClearBackground
     jsr LoadFieldSelect
@@ -408,7 +409,7 @@ ChkLeft:
     and #%00000010
     beq SkipLeft
     lda PlayerStage
-    cmp #$0A
+    cmp #FieldSelect_ID
     bne @Movement
     lda OptionValue
     cmp #$01
@@ -441,7 +442,7 @@ ChkRight:
     and #%00000001
     beq SkipRight
     lda PlayerStage
-    cmp #$0A
+    cmp #FieldSelect_ID
     bne @Movement
     lda OptionValue
     cmp #$08

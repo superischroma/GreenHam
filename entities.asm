@@ -24,6 +24,31 @@
 ; 16 - Needle
 ; 17 - Sewing Kit
 
+Chop_ID = $00
+Bead_ID = $01
+SuperCheese_ID = $02
+Banana_ID = $03
+AntiChop_ID = $04
+BlackHole_ID = $05
+Speedster_ID = $06
+IceShards_ID = $07
+Meteor_ID = $08
+Sandzilla_ID = $09
+Quicksand_ID = $0A
+Spikes_ID = $0B
+Gravitor_ID = $0C
+Thundercloud_ID = $0D
+Lightning_ID = $0E
+Ewitch_ID = $0F
+PartyPopper_ID = $10
+NegativeSpell_ID = $11
+Fish_ID = $12
+Chomper_ID = $13
+BubbleGenerator_ID = $14
+Whirlpool_ID = $15
+Needle_ID = $16
+SewingKit_ID = $17
+
 ; y - count
 ; x - offset
 ; a - direction (0 - up, 1 - down, 2 - left, 3 - right)

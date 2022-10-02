@@ -32,4 +32,6 @@ FHFRoomA:
 
     .byte $00, $00, %00000000
 
+    .byte $08, $70, $70
+
     .byte $FF
