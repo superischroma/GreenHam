@@ -94,6 +94,9 @@ TitleCardTimer:
 BananaPullTimer:
     .byte $00
 
+ThundercloudPullTimer:
+    .byte $00
+
 BlackHoleTimer:
     .byte $00
 
@@ -152,6 +155,7 @@ OverflowCounter: ; counting overflows for loops which exceed 256 iterations
     .include "entity/SuperCheese.asm"
     .include "entity/Needle.asm"
     .include "entity/RainingObject.asm"
+    .include "entity/Thundercloud.asm"
 
 CallPtrSubroutine:
     jmp (IndirectJmpPointer)

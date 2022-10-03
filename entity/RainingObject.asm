@@ -113,6 +113,10 @@ RainingObjTick:
     cpy #$11
     bne @InitLoop
 @End:
+    lda TempIndex+1
+    clc
+    adc #$10
+    sta TempIndex+1
     rts
 @Run:
     ldy #$00
@@ -172,6 +176,6 @@ RainingObjTick:
     iny
     cpy #$10
     bne @ResetLoop
-    rts
+    jmp @End
 
 ; $0C, $E4

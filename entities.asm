@@ -61,7 +61,6 @@ MoveSpriteGroup:
     beq @Down
     dec $0200, x
 @Loop:
-    inc $0203, x
     dey
     pha
     txa
@@ -86,6 +85,9 @@ MoveSpriteGroup:
     jmp @Loop
 
 AddPalette:
+    lda PalettePointer
+    cmp #$20
+    bcs @Default
     lda PPUSTATUS
     lda #$3F
     sta PPUADDR
@@ -108,6 +110,9 @@ AddPalette:
     lsr a
     sec
     sbc #$01
+    rts
+@Default:
+    lda #$01
     rts
 
 IsEntityDead:
