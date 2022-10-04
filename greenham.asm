@@ -142,20 +142,34 @@ OverflowCounter: ; counting overflows for loops which exceed 256 iterations
 
     .segment "CODE"
 
+    ; Utility subroutine code
     .include "loader.asm"
     .include "player.asm"
     .include "entities.asm"
 
-    .include "entity/Chop.asm"
-    .include "entity/Banana.asm"
-    .include "entity/Quicksand.asm"
-    .include "entity/BlackHole.asm"
-    .include "entity/Bead.asm"
-    .include "entity/Speedster.asm"
-    .include "entity/SuperCheese.asm"
-    .include "entity/Needle.asm"
-    .include "entity/RainingObject.asm"
-    .include "entity/Thundercloud.asm"
+    ; Entity-specific code
+    .include "entity/Chop.asm"          ; 00
+    .include "entity/Bead.asm"          ; 01
+    .include "entity/SuperCheese.asm"   ; 02
+    .include "entity/Banana.asm"        ; 03
+                                        ; 04
+    .include "entity/BlackHole.asm"     ; 05
+    .include "entity/Speedster.asm"     ; 06
+    .include "entity/RainingObject.asm" ; 07/08/0B
+    .include "entity/Sandzilla.asm"     ; 09
+    .include "entity/Quicksand.asm"     ; 0A
+                                        ; 0C
+    .include "entity/Thundercloud.asm"  ; 0D
+    .include "entity/Lightning.asm"     ; 0E
+                                        ; 0F
+                                        ; 10
+                                        ; 11
+                                        ; 12
+                                        ; 13
+                                        ; 14
+                                        ; 15
+    .include "entity/Needle.asm"        ; 16
+                                        ; 17
 
 CallPtrSubroutine:
     jmp (IndirectJmpPointer)

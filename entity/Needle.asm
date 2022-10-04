@@ -1,3 +1,5 @@
+; Needle (16) data and subroutines
+
 SpawnNeedle:
     ldx #$02
     ldy #$36

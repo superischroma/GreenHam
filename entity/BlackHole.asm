@@ -39,7 +39,7 @@ BlackHoleTick:
     cmp #BlackHoleDelay
     beq @Continue
     inc BlackHoleTimer
-    rts
+    jmp @End
 @Continue:
     lda #$00
     sta BlackHoleTimer
@@ -54,7 +54,7 @@ BlackHoleTick:
     adc #$08
     sta TempValue+1
     jsr ChkWithinBH
-    beq @Skip
+    beq @End
     lda TempValue
     cmp $020F
     bcc @MoveLeft
@@ -67,10 +67,14 @@ BlackHoleTick:
     cmp $020C
     bcc @MoveUp
     jsr MoveChopDown
-    rts
+    jmp @End
 @MoveUp:
     jsr MoveChopUp
-@Skip:
+@End:
+    lda TempIndex+1
+    clc
+    adc #$10
+    sta TempIndex+1
     rts
 
 ; check if pig is within black hole

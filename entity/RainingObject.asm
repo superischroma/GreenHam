@@ -15,6 +15,10 @@ SpawnIceShards:
     ldy #$1D
     bne SpawnRainingObj
 
+SpawnSpikes:
+    ldy #$28
+    bne SpawnRainingObj
+
 SpawnMeteor:
     ldy #$1E
 
@@ -73,9 +77,16 @@ RainingObjTick:
     cmp #$FE
     bne @Run
     lda ActiveEntities, x
+    cmp #$0B
+    bne @Offset
+    lda #$28
+    sta TempValue
+    jmp @SkipOffset
+@Offset:
     clc
     adc #$16
     sta TempValue
+@SkipOffset:
     txa
     asl a
     tax
@@ -103,6 +114,8 @@ RainingObjTick:
     lda TempValue
     sta (TempPointer), y
     cmp #$1D
+    beq @SkipInc
+    cmp #$28
     beq @SkipInc
     inc TempValue
 @SkipInc:

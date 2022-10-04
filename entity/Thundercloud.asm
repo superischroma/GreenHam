@@ -1,3 +1,5 @@
+; Thundercloud (0D) data and subroutines
+
 ThundercloudPullDelay = $04
 
 SpawnThundercloud:
