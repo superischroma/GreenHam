@@ -43,3 +43,14 @@ DecrementLives:
 SetStageValue:
     sta PlayerStage
     rts
+
+PlayerDeath:
+    jsr DisableScreen
+    lda #$00
+    sta GameStatus
+    jsr DecrementLives
+    ; game over check here to-do
+    ldx PlayerStage
+    jsr LoadStage
+    jsr EnableScreen
+    rts

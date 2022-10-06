@@ -45,6 +45,8 @@ SetPlayerX:
 MoveChopUp:
     jsr ChkInGame
     beq @End
+    jsr ChkControllable
+    beq @End
     ldx #$00
 @Loop:
     lda $0200, x
@@ -63,6 +65,8 @@ MoveChopUp:
 
 MoveChopDown:
     jsr ChkInGame
+    beq @End
+    jsr ChkControllable
     beq @End
     ldx #$00
 @Loop:
@@ -83,6 +87,8 @@ MoveChopDown:
 MoveChopLeft:
     jsr ChkInGame
     beq @End
+    jsr ChkControllable
+    beq @End
     ldx #$03
 @Loop:
     lda $0200, x
@@ -101,6 +107,8 @@ MoveChopLeft:
 
 MoveChopRight:
     jsr ChkInGame
+    beq @End
+    jsr ChkControllable
     beq @End
     ldx #$03
 @Loop:
@@ -154,6 +162,16 @@ ChkInGame:
     bcs @Not
     lda #$01
     rts
+@Not:
+    lda #$00
+    rts
+
+ChkControllable:
+    lda GameStatus
+    and #%00001000
+    bne @Not
+    lda #$01
+    rts 
 @Not:
     lda #$00
     rts

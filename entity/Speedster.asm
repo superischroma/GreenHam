@@ -19,7 +19,7 @@ SpeedsterTick:
     sta TempPointer
     lda #$02
     sta TempPointer+1
-    lda SpeedsterDestination
+    lda TrackingObjDestination
     bne @Continue
     lda SpeedsterTimer
     cmp #SpeedsterDelay
@@ -28,16 +28,16 @@ SpeedsterTick:
     jmp @End
 @Start:
     lda $020F
-    sta SpeedsterDestination
+    sta TrackingObjDestination
     lda $020C
-    sta SpeedsterDestination+1
+    sta TrackingObjDestination+1
     ldy #$01
     lda #$1B
     sta (TempPointer), y
     dey
     lda (TempPointer), y ; load y-pos
     ldy #$02
-    cmp SpeedsterDestination+1
+    cmp TrackingObjDestination+1
     bcc @FaceUp
     lda #%00000001
     sta (TempPointer), y
@@ -48,7 +48,7 @@ SpeedsterTick:
 @Continue:
     ldy #$00
     lda (TempPointer), y ; load y-pos
-    cmp SpeedsterDestination+1
+    cmp TrackingObjDestination+1
     bcc @MoveDown
     beq @MoveHorizontal
     sec
@@ -63,7 +63,7 @@ SpeedsterTick:
 @MoveHorizontal:
     ldy #$03
     lda (TempPointer), y
-    cmp SpeedsterDestination
+    cmp TrackingObjDestination
     bcc @MoveRight
     pha
     ldy #$01
@@ -77,7 +77,7 @@ SpeedsterTick:
     sec
     sbc #SpeedsterHSpeed
     sta (TempPointer), y
-    cmp SpeedsterDestination
+    cmp TrackingObjDestination
     bcc @Restore
     beq @Restore
     jmp @End
@@ -94,13 +94,13 @@ SpeedsterTick:
     clc
     adc #SpeedsterHSpeed
     sta (TempPointer), y
-    cmp SpeedsterDestination
+    cmp TrackingObjDestination
     bcs @Restore
     jmp @End
 @Restore:
     lda #$00
-    sta SpeedsterDestination
-    sta SpeedsterDestination+1
+    sta TrackingObjDestination
+    sta TrackingObjDestination+1
     sta SpeedsterTimer
 @End:
     lda TempIndex+1

@@ -32,7 +32,6 @@ FHFRoomA:
 
     .byte $00, $00, %00000000
 
-    .byte $08, $70, $70
-    .byte $0D, $70, $20
+    .byte $0C, $D0, GravitorY
 
     .byte $FF

@@ -37,10 +37,11 @@ PlayerStage:
 PlayerFacing:
     .byte $00
 
-;           ---- needle status
-;           | --- paused (0 - no, 1 - yes)
-;           | | -- player facing direction (0 - right, 1 - left)
-;           | | |
+;         -------- player controllability status (0 - yes, 1 - no)
+;         | ------ needle status (0 - no, 1 - yes)
+;         | | ---- paused (0 - no, 1 - yes)
+;         | | | -- player facing direction (0 - right, 1 - left)
+;         | | | |
 ; 0 0 0 0 0 0 0 0
 GameStatus:
     .byte %00000000
@@ -103,7 +104,7 @@ BlackHoleTimer:
 SpeedsterTimer:
     .byte $00
 
-SpeedsterDestination:
+TrackingObjDestination:
     .byte $00, $00
 
 RainingObjTrigger:
@@ -158,7 +159,7 @@ OverflowCounter: ; counting overflows for loops which exceed 256 iterations
     .include "entity/RainingObject.asm" ; 07/08/0B
     .include "entity/Sandzilla.asm"     ; 09
     .include "entity/Quicksand.asm"     ; 0A
-                                        ; 0C
+    .include "entity/Gravitor.asm"      ; 0C
     .include "entity/Thundercloud.asm"  ; 0D
     .include "entity/Lightning.asm"     ; 0E
                                         ; 0F
