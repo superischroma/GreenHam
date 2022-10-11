@@ -164,7 +164,7 @@ OverflowCounter: ; counting overflows for loops which exceed 256 iterations
     .include "entity/Lightning.asm"     ; 0E
                                         ; 0F
                                         ; 10
-                                        ; 11
+    .include "entity/NegativeSpell.asm" ; 11
                                         ; 12
                                         ; 13
                                         ; 14
