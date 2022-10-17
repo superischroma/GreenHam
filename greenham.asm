@@ -171,6 +171,7 @@ OverflowCounter: ; counting overflows for loops which exceed 256 iterations
                                         ; 15
     .include "entity/Needle.asm"        ; 16
                                         ; 17
+    .include "entity/Bubble.asm"        ; 18
 
 CallPtrSubroutine:
     jmp (IndirectJmpPointer)
@@ -738,6 +739,18 @@ BGPatternB:
     .byte $02, $03, $2A, $2B, $4A, $4B, $5C, $5D, $90, $91, $C3, $D8, $EE, $EF ; 2, 4, 2, 2, 1, 1, 2
     .byte $00
     .byte $27, $59, $5A, $79, $7A ; 1, 4
+    .byte $00
+
+BGPatternC:
+    .byte $00
+    .byte $00
+    .byte $00
+    .byte $28, $29, $48, $49, $68, $69, $88, $89
+    .byte $37, $38, $57, $58, $77, $78, $97, $98
+    .byte $62, $63, $82, $83
+    .byte $6C, $6D, $8C, $8D
+    .byte $71, $72, $91, $92
+    .byte $7D, $7E, $9D, $9E
     .byte $00
 
     .include "tables.asm"
