@@ -132,6 +132,9 @@ PalettePointer:
 OverflowCounter: ; counting overflows for loops which exceed 256 iterations
     .byte 0
 
+BufferPointer:
+    .byte $00
+
     .segment "HEADER"
 
     .byte "NES", $1A ; iNES Header
@@ -149,29 +152,28 @@ OverflowCounter: ; counting overflows for loops which exceed 256 iterations
     .include "entities.asm"
 
     ; Entity-specific code
-    .include "entity/Chop.asm"          ; 00
-    .include "entity/Bead.asm"          ; 01
-    .include "entity/SuperCheese.asm"   ; 02
-    .include "entity/Banana.asm"        ; 03
-                                        ; 04
-    .include "entity/BlackHole.asm"     ; 05
-    .include "entity/Speedster.asm"     ; 06
-    .include "entity/RainingObject.asm" ; 07/08/0B
-    .include "entity/Sandzilla.asm"     ; 09
-    .include "entity/Quicksand.asm"     ; 0A
-    .include "entity/Gravitor.asm"      ; 0C
-    .include "entity/Thundercloud.asm"  ; 0D
-    .include "entity/Lightning.asm"     ; 0E
-                                        ; 0F
-                                        ; 10
-    .include "entity/NegativeSpell.asm" ; 11
-                                        ; 12
-                                        ; 13
-                                        ; 14
-                                        ; 15
-    .include "entity/Needle.asm"        ; 16
-                                        ; 17
-    .include "entity/Bubble.asm"        ; 18
+    .include "entity/Chop.asm"              ; 00
+    .include "entity/Bead.asm"              ; 01
+    .include "entity/SuperCheese.asm"       ; 02
+    .include "entity/Banana.asm"            ; 03
+                                            ; 04
+    .include "entity/BlackHole.asm"         ; 05
+    .include "entity/Speedster.asm"         ; 06
+    .include "entity/RainingObject.asm"     ; 07/08/0B
+    .include "entity/Sandzilla.asm"         ; 09
+    .include "entity/Quicksand.asm"         ; 0A
+    .include "entity/Gravitor.asm"          ; 0C
+    .include "entity/Thundercloud.asm"      ; 0D
+    .include "entity/Lightning.asm"         ; 0E
+                                            ; 0F
+                                            ; 10
+    .include "entity/NegativeSpell.asm"     ; 11
+                                            ; 12
+                                            ; 13
+    .include "entity/BubbleGenerator.asm"   ; 14
+                                            ; 15
+    .include "entity/Needle.asm"            ; 16
+                                            ; 17
 
 CallPtrSubroutine:
     jmp (IndirectJmpPointer)

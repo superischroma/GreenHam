@@ -23,7 +23,6 @@
 ; 15 - Whirlpool
 ; 16 - Needle
 ; 17 - Sewing Kit
-; 18 - Bubble
 
 Chop_ID = $00
 Bead_ID = $01
@@ -49,7 +48,6 @@ BubbleGenerator_ID = $14
 Whirlpool_ID = $15
 Needle_ID = $16
 SewingKit_ID = $17
-Bubble_ID = $18
 
 ; y - count
 ; x - offset

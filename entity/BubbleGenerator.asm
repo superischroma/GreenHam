@@ -1,23 +1,23 @@
-; Bubble (18; temporary object)
+; Bubble Generator (14) data and subroutines
 
-BubblePalette:
+BubbleLikePalette:
     .byte $02, $30, $12, $2D
 
-SpawnBubble:
-    lda #<BubblePalette
+SpawnBubbleGenerator:
+    lda #<BubbleLikePalette
     sta TempPointer
-    lda #>BubblePalette
+    lda #>BubbleLikePalette
     sta TempPointer+1
     jsr AddPalette
     sta TempValue+2
     ldx #$02
-    ldy #$46
+    ldy #$4A
     jsr RenderRow
     lda TempValue+1
     clc
     adc #$08
     sta TempValue+1
     ldx #$02
-    ldy #$48
+    ldy #$4C
     jsr RenderRow
     rts
