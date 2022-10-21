@@ -104,6 +104,9 @@ BlackHoleTimer:
 SpeedsterTimer:
     .byte $00
 
+BubbleFloatTimer:
+    .byte $00
+
 TrackingObjDestination:
     .byte $00, $00
 
