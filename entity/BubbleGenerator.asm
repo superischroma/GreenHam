@@ -66,7 +66,9 @@ BubbleGeneratorTick:
     lda (TempPointer), y
     cmp #$FF
     beq @DisableBubble
-    jmp @Ret
+    jsr ChkCollison2x2
+    beq @Ret
+    jmp @DisableBubble
 @EnableBubble:
     ldx #$46
     ldy #$01

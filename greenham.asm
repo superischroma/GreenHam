@@ -31,6 +31,9 @@ PlayerBeads:
 PlayerStage:
     .byte $00
 
+AirCounter:
+    .byte $00
+
 ; Direction player is facing
 ; 00 - right
 ; 01 - left

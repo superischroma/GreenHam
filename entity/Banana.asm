@@ -87,6 +87,14 @@ BananaTick:
     ldy #$00
     jsr @PullBananaLoop
 @DoneDownCheck:
+    lda #$10
+    sta TempValue
+    lda #$18
+    sta TempValue+1
+    jsr ChkCollison
+    beq @DoneCollisonChk
+    jsr PlayerDeath
+@DoneCollisonChk:
     lda #$00
     sta BananaPullTimer
     lda TempIndex+1

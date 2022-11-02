@@ -90,6 +90,10 @@ GravitorTick:
     lda (TempPointer), y
     cmp #$EE
     bcc @Finish
+    lda TempIndex+1
+    clc
+    adc #$04
+    sta TempIndex+1
     jmp PlayerDeath
 
 @DropPig:
