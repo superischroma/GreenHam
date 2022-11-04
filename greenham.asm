@@ -172,14 +172,14 @@ BufferPointer:
     .include "entity/Thundercloud.asm"      ; 0D
     .include "entity/Lightning.asm"         ; 0E
                                             ; 0F
-                                            ; 10
+    .include "entity/PartyPopper.asm"       ; 10
     .include "entity/NegativeSpell.asm"     ; 11
                                             ; 12
                                             ; 13
     .include "entity/BubbleGenerator.asm"   ; 14
                                             ; 15
     .include "entity/Needle.asm"            ; 16
-                                            ; 17
+    .include "entity/SewingKit.asm"         ; 17
 
 CallPtrSubroutine:
     jmp (IndirectJmpPointer)

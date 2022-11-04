@@ -1,14 +1,23 @@
-; Needle (16) data and subroutines
+; Sewing Kit (17) data and subroutines
 
-SpawnNeedle:
+SpawnSewingKit:
     ldx #$02
-    ldy #$36
+    ldy #$0A
+    lda #$00
+    sta TempValue+2
+    jsr RenderRow
+    lda TempValue+1
+    clc
+    adc #$08
+    sta TempValue+1
+    ldx #$02
+    ldy #$0C
     lda #$00
     sta TempValue+2
     jsr RenderRow
     rts
 
-NeedleTick:
+SewingKitTick:
     sta TempPointer
     lda #$02
     sta TempPointer+1
@@ -20,15 +29,12 @@ NeedleTick:
     sta TempValue+1
     jsr ChkCollison
     beq @End ; is the player colliding with the needle? if not, branch
-    ldy #$08
+    ldy #$10
     jsr UnloadSprite
-    lda GameStatus
-    ora #%00000100
-    sta GameStatus
-    jsr LoadNeedleStatus
+    jsr IncrementLives
 @End:
     lda TempIndex+1
     clc
-    adc #$08
+    adc #$10
     sta TempIndex+1
     rts

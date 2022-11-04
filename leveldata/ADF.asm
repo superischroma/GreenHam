@@ -26,5 +26,6 @@ ADFRoomA:
     .byte $00, $00, %00000000
 
     .byte $14, $72, $CD
+    .byte $17, $70, $70
     
     .byte $FF
