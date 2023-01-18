@@ -32,6 +32,6 @@ FHFRoomA:
 
     .byte $00, $00, %00000000
 
-    .byte $0C, $D0, GravitorY
+    .byte AntiChop_ID, $70, $70
 
     .byte $FF

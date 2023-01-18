@@ -162,7 +162,7 @@ BufferPointer:
     .include "entity/Bead.asm"              ; 01
     .include "entity/SuperCheese.asm"       ; 02
     .include "entity/Banana.asm"            ; 03
-                                            ; 04
+    .include "entity/AntiChop.asm"          ; 04
     .include "entity/BlackHole.asm"         ; 05
     .include "entity/Speedster.asm"         ; 06
     .include "entity/RainingObject.asm"     ; 07/08/0B

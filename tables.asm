@@ -13,7 +13,17 @@ BGKeyframeSetTable:
     .word FHFBGKeyframes, SPFBGKeyframes, MSFBGKeyframes, 0, SSFBGKeyframes, 0, 0, 0
 
 TickTable:
-    .word 0, 0, 0, BananaTick, 0, BlackHoleTick, SpeedsterTick, RainingObjTick, RainingObjTick, BananaTick, BlackHoleTick, RainingObjTick, GravitorTick, ThundercloudTick, 0, 0, 0, 0, 0, 0, BubbleGeneratorTick, 0, NeedleTick, SewingKitTick
+    .word 0, 0, 0, BananaTick
+    .word BananaTick, BlackHoleTick, SpeedsterTick, RainingObjTick
+    .word RainingObjTick, BananaTick, BlackHoleTick, RainingObjTick
+    .word GravitorTick, ThundercloudTick, 0, 0
+    .word 0, 0, 0, 0
+    .word BubbleGeneratorTick, 0, NeedleTick, SewingKitTick
 
 SpawnTable:
-    .word 0, 0, SpawnSuperCheese, SpawnBanana, 0, SpawnBlackHole, SpawnSpeedster, SpawnIceShards, SpawnMeteor, SpawnSandzilla, SpawnQuicksand, SpawnSpikes, SpawnGravitor, SpawnThundercloud, 0, 0, SpawnPartyPopper, SpawnNegativeSpell, 0, 0, SpawnBubbleGenerator, 0, SpawnNeedle, SpawnSewingKit
+    .word 0, 0, SpawnSuperCheese, SpawnBanana
+    .word SpawnAntiChop, SpawnBlackHole, SpawnSpeedster, SpawnIceShards
+    .word SpawnMeteor, SpawnSandzilla, SpawnQuicksand, SpawnSpikes
+    .word SpawnGravitor, SpawnThundercloud, 0, 0
+    .word SpawnPartyPopper, SpawnNegativeSpell, 0, 0
+    .word SpawnBubbleGenerator, 0, SpawnNeedle, SpawnSewingKit
