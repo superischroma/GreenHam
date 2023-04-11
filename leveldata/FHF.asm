@@ -385,7 +385,7 @@ FHFRoomR1:
 
 FHFRoomR2:
     .word BGPatternA
-    .word 0, FHFRoomR3, FHFRoomR1, FHFRoomEnd
+    .word 0, FHFRoomR3, FHFRoomR1, 0
 
     .byte $4E
     .byte $4C, $4D
