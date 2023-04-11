@@ -611,8 +611,8 @@ PigSprite:
     .byte $84, $09, %00000000, $1C
 
 PigSpawnPositions:
-    .byte $1E ; top
-    .byte $C4 ; down
+    .byte $C4 ; top
+    .byte $1E ; down
     .byte $E0 ; left
     .byte $0F ; right
 

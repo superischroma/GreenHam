@@ -326,10 +326,11 @@ CheckNeighbor:
     sta PlayerRoom+1
     jsr DisableScreen
     lda PigSpawnPositions, x
-    cmp #$02
+    cpx #$02
     bcs @LR
     tay
     jsr SetPlayerY
+    jmp @AfterLR
 @LR:
     tax
     jsr SetPlayerX

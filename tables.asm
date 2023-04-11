@@ -7,7 +7,7 @@ LevelPaletteTable:
     .word FHFPalette, SPFPalette, MSFPalette, ADFPalette, SSFPalette, 0, 0, 0
 
 InitialRoomTable:
-    .word FHFRoomA, SPFRoomA, MSFRoomA, ADFRoomA, SSFRoomA, 0, 0, 0
+    .word FHFRoomStart, SPFRoomA, MSFRoomA, ADFRoomA, SSFRoomA, 0, 0, 0
 
 BGKeyframeSetTable:
     .word FHFBGKeyframes, SPFBGKeyframes, MSFBGKeyframes, 0, SSFBGKeyframes, 0, 0, 0
